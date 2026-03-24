@@ -1,0 +1,20 @@
+# ServiceNow CLI
+.snc/
+snc-config.json
+*.snc-credentials
+
+# Node
+node_modules/
+npm-debug.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / credentials — NEVER commit these
+.env
+*.env.local
+instance-credentials.json
+
+# Claude Code local settings (may contain credentials)
+.claude/settings.local.json
