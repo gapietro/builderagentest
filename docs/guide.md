@@ -198,12 +198,12 @@ my-training-app/
 If you're starting from an app that already exists on your instance:
 
 ```bash
-now-sdk download
+now-sdk download src/
 ```
 
 This pulls the existing app metadata from your PDI into the local `src/` directory.
 
-> **Tip:** Always run `now-sdk download` before starting work to make sure
+> **Tip:** Always run `now-sdk download src/` before starting work to make sure
 > your local files are in sync with the instance.
 
 ### 3.4 Verify in the Instance
@@ -293,7 +293,7 @@ The core Fluent workflow: download from instance → edit Fluent DSL locally →
 Always sync the latest from your instance before editing:
 
 ```bash
-now-sdk download
+now-sdk download src/
 ```
 
 ### 5.2 Edit Files Locally
@@ -338,7 +338,7 @@ application navigator and confirm your edits are there.
 If your instance has changes that aren't in your local files:
 
 ```bash
-now-sdk download      # Get latest from instance first
+now-sdk download src/ # Get latest from instance first
 # Review and merge any differences manually
 now-sdk install       # Then install your changes
 ```
@@ -475,7 +475,7 @@ Claude will use the MCP connection to query your instance in real time.
 Day-to-day Fluent development loop:
 ┌─────────────────────────────────────────────────────┐
 │ 1. git checkout -b feature/my-change                │
-│ 2. now-sdk download      (sync from instance)       │
+│ 2. now-sdk download src/ (sync from instance)       │
 │ 3. Edit Fluent DSL in Claude Code / VS Code         │
 │ 4. now-sdk build         (compile + check errors)   │
 │ 5. now-sdk install       (compile + push to PDI)    │

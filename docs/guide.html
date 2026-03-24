@@ -644,11 +644,11 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
       <p>If starting from an app that already exists on your instance:</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk download</pre>
+        <pre>now-sdk download src/</pre>
       </div>
       <div class="callout tip">
         <strong>Tip</strong>
-        Always run <code>now-sdk download</code> before starting work to ensure your local files are in sync with the instance.
+        Always run <code>now-sdk download src/</code> before starting work to ensure your local files are in sync with the instance.
       </div>
 
       <h3 class="sub">3.4 &mdash; Verify in the Instance</h3>
@@ -732,7 +732,7 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
       <h3 class="sub">5.1 &mdash; Download Before You Start</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk download</pre>
+        <pre>now-sdk download src/</pre>
       </div>
 
       <h3 class="sub">5.2 &mdash; Edit Files Locally</h3>
@@ -769,7 +769,7 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
       <h3 class="sub">5.5 &mdash; Handling Conflicts</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk download      <span class="cmt"># Get latest from instance first</span>
+        <pre>now-sdk download src/ <span class="cmt"># Get latest from instance first</span>
 <span class="cmt"># Review and merge any differences manually</span>
 now-sdk install       <span class="cmt"># Then install your changes</span></pre>
       </div>
@@ -908,7 +908,7 @@ claude</pre>
           </div>
           <div class="workflow-step">
             <div class="step-num">2</div>
-            <div class="step-text"><code>now-sdk download</code> &mdash; sync latest from instance</div>
+            <div class="step-text"><code>now-sdk download src/</code> &mdash; sync latest from instance</div>
           </div>
           <div class="workflow-step">
             <div class="step-num">3</div>
