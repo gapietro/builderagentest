@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>ServiceNow Fluent Development Guide</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">ServiceNow Fluent Development Guide</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#servicenow-fluent-development-guide"
+id="toc-servicenow-fluent-development-guide">ServiceNow Fluent
+Development Guide</a>
+<ul>
+<li><a href="#prerequisites"
+id="toc-prerequisites">Prerequisites</a></li>
+<li><a href="#phase-1-installation-verification"
+id="toc-phase-1-installation-verification">Phase 1: Installation &amp;
+Verification</a>
+<ul>
+<li><a href="#check-existing-tools" id="toc-check-existing-tools">1.1
+Check Existing Tools</a></li>
+<li><a href="#install-upgrade-servicenow-cli-snc"
+id="toc-install-upgrade-servicenow-cli-snc">1.2 Install / Upgrade
+ServiceNow CLI (snc)</a></li>
+<li><a href="#install-node.js-if-needed"
+id="toc-install-node.js-if-needed">1.3 Install Node.js (if
+needed)</a></li>
+<li><a href="#install-github-cli-if-needed"
+id="toc-install-github-cli-if-needed">1.4 Install GitHub CLI (if
+needed)</a></li>
+<li><a href="#configure-git-identity"
+id="toc-configure-git-identity">1.5 Configure Git Identity</a></li>
+</ul></li>
+<li><a href="#phase-2-pdi-authentication"
+id="toc-phase-2-pdi-authentication">Phase 2: PDI Authentication</a>
+<ul>
+<li><a href="#configure-snc" id="toc-configure-snc">2.1 Configure
+snc</a></li>
+<li><a href="#verify-connection" id="toc-verify-connection">2.2 Verify
+Connection</a></li>
+</ul></li>
+<li><a href="#phase-3-create-a-scoped-app"
+id="toc-phase-3-create-a-scoped-app">Phase 3: Create a Scoped App</a>
+<ul>
+<li><a href="#create-the-app" id="toc-create-the-app">3.1 Create the
+App</a></li>
+<li><a href="#pull-the-app-to-local" id="toc-pull-the-app-to-local">3.2
+Pull the App to Local</a></li>
+<li><a href="#verify-in-the-instance"
+id="toc-verify-in-the-instance">3.3 Verify in the Instance</a></li>
+</ul></li>
+<li><a href="#phase-4-connect-to-claude-code"
+id="toc-phase-4-connect-to-claude-code">Phase 4: Connect to Claude
+Code</a>
+<ul>
+<li><a href="#open-the-project-in-claude-code"
+id="toc-open-the-project-in-claude-code">4.1 Open the Project in Claude
+Code</a></li>
+<li><a href="#create-a-claude.md" id="toc-create-a-claude.md">4.2 Create
+a CLAUDE.md</a></li>
+<li><a href="#mcp-settings-placeholder-see-phase-7"
+id="toc-mcp-settings-placeholder-see-phase-7">4.3 MCP Settings
+(Placeholder — See Phase 7)</a></li>
+</ul></li>
+<li><a href="#phase-5-development-loop"
+id="toc-phase-5-development-loop">Phase 5: Development Loop</a>
+<ul>
+<li><a href="#pull-before-you-start" id="toc-pull-before-you-start">5.1
+Pull Before You Start</a></li>
+<li><a href="#edit-files-locally" id="toc-edit-files-locally">5.2 Edit
+Files Locally</a></li>
+<li><a href="#push-to-instance" id="toc-push-to-instance">5.3 Push to
+Instance</a></li>
+<li><a href="#handling-conflicts" id="toc-handling-conflicts">5.4
+Handling Conflicts</a></li>
+</ul></li>
+<li><a href="#phase-6-git-workflow" id="toc-phase-6-git-workflow">Phase
+6: Git Workflow</a>
+<ul>
+<li><a href="#create-a-feature-branch"
+id="toc-create-a-feature-branch">6.1 Create a Feature Branch</a></li>
+<li><a href="#stage-and-commit" id="toc-stage-and-commit">6.2 Stage and
+Commit</a></li>
+<li><a href="#push-branch-and-open-pr"
+id="toc-push-branch-and-open-pr">6.3 Push Branch and Open PR</a></li>
+<li><a href="#merge-and-clean-up" id="toc-merge-and-clean-up">6.4 Merge
+and Clean Up</a></li>
+</ul></li>
+<li><a href="#phase-7-mcp-setup-claude-servicenow"
+id="toc-phase-7-mcp-setup-claude-servicenow">Phase 7: MCP Setup — Claude
+↔︎ ServiceNow</a>
+<ul>
+<li><a href="#install-the-servicenow-mcp-server"
+id="toc-install-the-servicenow-mcp-server">7.1 Install the ServiceNow
+MCP Server</a></li>
+<li><a href="#configure-credentials-local-only"
+id="toc-configure-credentials-local-only">7.2 Configure Credentials
+(Local Only)</a></li>
+<li><a href="#restart-claude-code" id="toc-restart-claude-code">7.3
+Restart Claude Code</a></li>
+<li><a href="#verify-mcp-connection" id="toc-verify-mcp-connection">7.4
+Verify MCP Connection</a></li>
+<li><a href="#try-it-ask-claude-about-your-instance"
+id="toc-try-it-ask-claude-about-your-instance">7.5 Try It — Ask Claude
+About Your Instance</a></li>
+</ul></li>
+<li><a href="#summary-full-workflow-reference"
+id="toc-summary-full-workflow-reference">Summary: Full Workflow
+Reference</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="servicenow-fluent-development-guide">ServiceNow Fluent
+Development Guide</h1>
+<blockquote>
+<p>A step-by-step runbook for setting up a ServiceNow scoped app,
+developing locally in Claude Code, and syncing code to your PDI and
+GitHub.</p>
+<p><strong>Audience:</strong> ServiceNow internal developers — all skill
+levels. Experienced devs: headings are scannable, commands are
+copy-paste ready.</p>
+</blockquote>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Before starting, ensure you have: - A ServiceNow PDI (Personal
+Developer Instance) - A GitHub account with SSH or HTTPS access
+configured - macOS or Linux (Windows WSL2 also works)</p>
+<hr />
+<h2 id="phase-1-installation-verification">Phase 1: Installation &amp;
+Verification</h2>
+<h3 id="check-existing-tools">1.1 Check Existing Tools</h3>
+<p>Run each command to verify what’s already installed:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> <span class="at">--version</span>        <span class="co"># ServiceNow CLI</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> <span class="at">--version</span>       <span class="co"># Node.js (required by snc) — need v18+</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span>        <span class="co"># Git</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> <span class="at">--version</span>         <span class="co"># GitHub CLI</span></span></code></pre></div>
+<p>If any command returns “command not found”, follow the install steps
+below.</p>
+<h3 id="install-upgrade-servicenow-cli-snc">1.2 Install / Upgrade
+ServiceNow CLI (snc)</h3>
+<blockquote>
+<p><strong>Why snc?</strong> The ServiceNow CLI is the official tool for
+creating, pulling, and pushing scoped apps between your local machine
+and a ServiceNow instance. Think of it like <code>git</code> but for
+ServiceNow app files.</p>
+</blockquote>
+<p><strong>Download snc:</strong></p>
+<ol type="1">
+<li>Go to: <a
+href="https://developer.servicenow.com">developer.servicenow.com</a></li>
+<li>Sign in with your ServiceNow credentials</li>
+<li>Navigate to: <strong>Tools → ServiceNow CLI</strong></li>
+<li>Download the installer for your OS</li>
+<li>Run the installer</li>
+</ol>
+<p><strong>Verify installation:</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> <span class="at">--version</span></span></code></pre></div>
+<p>Expected output (version may differ):</p>
+<pre><code>snc/x.x.x &lt;os&gt;-&lt;arch&gt; node-vxx.x.x</code></pre>
+<p><strong>If you have an old version</strong>, re-run the installer
+from the link above — it will upgrade in place.</p>
+<h3 id="install-node.js-if-needed">1.3 Install Node.js (if needed)</h3>
+<p>snc requires Node.js v18 or higher.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> <span class="at">--version</span></span></code></pre></div>
+<p>If below v18 or not installed: - <strong>macOS
+(recommended):</strong> <code>brew install node</code> - <strong>All
+platforms:</strong> Download from <a
+href="https://nodejs.org">nodejs.org</a></p>
+<h3 id="install-github-cli-if-needed">1.4 Install GitHub CLI (if
+needed)</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># macOS</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> install gh</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> <span class="at">--version</span></span></code></pre></div>
+<p><strong>Authenticate gh with GitHub:</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> auth login</span></code></pre></div>
+<p>Follow the prompts — choose GitHub.com → HTTPS → authenticate via
+browser.</p>
+<h3 id="configure-git-identity">1.5 Configure Git Identity</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.name <span class="st">&quot;Your Name&quot;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> user.email <span class="st">&quot;your.email@company.com&quot;</span></span></code></pre></div>
+<p>Verify:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> config <span class="at">--global</span> <span class="at">--list</span> <span class="kw">|</span> <span class="fu">grep</span> user</span></code></pre></div>
+<hr />
+<h2 id="phase-2-pdi-authentication">Phase 2: PDI Authentication</h2>
+<blockquote>
+<p>You already have a PDI through the internal provisioning process.
+This phase connects your local snc CLI to that instance.</p>
+</blockquote>
+<h3 id="configure-snc">2.1 Configure snc</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> configure</span></code></pre></div>
+<p>You will be prompted for: - <strong>Instance URL:</strong>
+<code>https://your-instance.service-now.com</code> -
+<strong>Username:</strong> Your ServiceNow login -
+<strong>Password:</strong> Your ServiceNow password (or OAuth token if
+configured)</p>
+<blockquote>
+<p><strong>Security note:</strong> snc stores credentials locally in
+<code>~/.snc/</code>. Never copy these files into your project repo or
+commit them. The <code>.gitignore</code> in this project already
+excludes them.</p>
+</blockquote>
+<h3 id="verify-connection">2.2 Verify Connection</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> instance info</span></code></pre></div>
+<p>Expected output shows your instance name, version, and status.</p>
+<p>If you see an authentication error: - Double-check your instance URL
+(no trailing slash) - Verify your credentials work by logging into the
+instance in a browser - Re-run <code>snc configure</code></p>
+<hr />
+<h2 id="phase-3-create-a-scoped-app">Phase 3: Create a Scoped App</h2>
+<blockquote>
+<p><strong>What is a scoped app?</strong> In ServiceNow, all custom
+development lives inside “scoped applications” — isolated namespaces
+that prevent conflicts with other apps and the platform itself. A scope
+looks like <code>x_acme_myapp</code>. If you already know this, skip
+ahead to 3.1.</p>
+</blockquote>
+<h3 id="create-the-app">3.1 Create the App</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> app create</span></code></pre></div>
+<p>You will be prompted for: - <strong>App name:</strong> e.g.,
+<code>My Training App</code> - <strong>Scope:</strong> e.g.,
+<code>x_snc_training</code> (auto-suggested, you can customize) -
+<strong>Version:</strong> <code>1.0.0</code></p>
+<p>snc creates the app on your PDI and returns an app sys_id.</p>
+<h3 id="pull-the-app-to-local">3.2 Pull the App to Local</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> app pull</span></code></pre></div>
+<p>This syncs the initial app structure from your PDI into a local
+<code>src/</code> directory. The structure will look like:</p>
+<pre><code>src/
+├── app_scope_x_snc_training/
+│   ├── sys_app.xml
+│   ├── sys_scope.xml
+│   └── ...</code></pre>
+<blockquote>
+<p><strong>Tip:</strong> Always run <code>snc app pull</code> before
+starting work to make sure your local files are in sync with the
+instance.</p>
+</blockquote>
+<h3 id="verify-in-the-instance">3.3 Verify in the Instance</h3>
+<p>Log into your PDI and navigate to: <strong>App Engine Studio → My
+Apps</strong> (or <strong>System Applications → Studio</strong>)</p>
+<p>Your new app should appear in the list.</p>
+<hr />
+<h2 id="phase-4-connect-to-claude-code">Phase 4: Connect to Claude
+Code</h2>
+<blockquote>
+<p><strong>What is Claude Code?</strong> Claude Code (CC) is Anthropic’s
+AI-powered CLI development environment. It understands your codebase and
+can help you write, review, and push ServiceNow app code — including
+talking directly to your instance via MCP (covered in Phase 7).</p>
+</blockquote>
+<h3 id="open-the-project-in-claude-code">4.1 Open the Project in Claude
+Code</h3>
+<p>From your project root:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span></span></code></pre></div>
+<p>Claude Code will start and index your project files.</p>
+<h3 id="create-a-claude.md">4.2 Create a CLAUDE.md</h3>
+<p>A <code>CLAUDE.md</code> file gives Claude context about your
+project. Create one at the project root:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># My Training App — ServiceNow Scoped App</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">## Project Overview</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>ServiceNow scoped app (scope: x_snc_training) on PDI instance.</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>Primary development via ServiceNow CLI (snc) + Claude Code.</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Key Commands</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pull from instance: <span class="in">`snc app pull`</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Push to instance: <span class="in">`snc app push`</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>App source: <span class="in">`src/`</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conventions</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>All changes pushed to instance AND committed to git</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Never commit snc credentials or .snc/ directory</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Branch naming: feature/, fix/, chore/</span></code></pre></div>
+<h3 id="mcp-settings-placeholder-see-phase-7">4.3 MCP Settings
+(Placeholder — See Phase 7)</h3>
+<p>Create <code>.claude/settings.json</code> at your project root with
+this template:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;servicenow&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;npx&quot;</span><span class="fu">,</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;-y&quot;</span><span class="ot">,</span> <span class="st">&quot;@servicenow/mcp-server&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;SN_INSTANCE_URL&quot;</span><span class="fu">:</span> <span class="st">&quot;https://your-instance.service-now.com&quot;</span><span class="fu">,</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;SN_USERNAME&quot;</span><span class="fu">:</span> <span class="st">&quot;your-username&quot;</span><span class="fu">,</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;SN_PASSWORD&quot;</span><span class="fu">:</span> <span class="st">&quot;your-password&quot;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<blockquote>
+<p><strong>Important:</strong> This template uses placeholder values and
+is safe to commit. When you fill in real credentials, save to
+<code>.claude/settings.local.json</code> instead (which is gitignored).
+Never commit real credentials.</p>
+</blockquote>
+<hr />
+<h2 id="phase-5-development-loop">Phase 5: Development Loop</h2>
+<p>The core workflow: pull from instance → edit locally → push back.</p>
+<h3 id="pull-before-you-start">5.1 Pull Before You Start</h3>
+<p>Always sync the latest from your instance before editing:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> app pull</span></code></pre></div>
+<h3 id="edit-files-locally">5.2 Edit Files Locally</h3>
+<p>Open files in <code>src/</code> using VS Code or Claude Code. Common
+files you’ll edit: -
+<code>src/&lt;scope&gt;/sys_script_include_*.xml</code> — Script
+Includes - <code>src/&lt;scope&gt;/sys_ui_page_*.xml</code> — UI Pages -
+<code>src/&lt;scope&gt;/sys_rest_message_*.xml</code> — REST
+Messages</p>
+<blockquote>
+<p><strong>Tip:</strong> Ask Claude Code to help — e.g., “Add a utility
+function to the IncidentUtils Script Include that formats incident
+numbers.”</p>
+</blockquote>
+<h3 id="push-to-instance">5.3 Push to Instance</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> app push</span></code></pre></div>
+<p>This uploads your local changes to the PDI.</p>
+<p>Verify in the instance: open the record you changed in Studio or the
+application navigator and confirm your edits are there.</p>
+<h3 id="handling-conflicts">5.4 Handling Conflicts</h3>
+<p>If snc reports a conflict (instance has changes you don’t have
+locally):</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> app pull          <span class="co"># Get latest from instance first</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Resolve any file conflicts manually</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="ex">snc</span> app push          <span class="co"># Then push your changes</span></span></code></pre></div>
+<blockquote>
+<p><strong>Rule of thumb:</strong> Pull first, always. Especially if
+others share the instance.</p>
+</blockquote>
+<hr />
+<h2 id="phase-6-git-workflow">Phase 6: Git Workflow</h2>
+<h3 id="create-a-feature-branch">6.1 Create a Feature Branch</h3>
+<p>Never commit directly to main:</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout <span class="at">-b</span> feature/my-first-change</span></code></pre></div>
+<p>Branch naming: | Prefix | When to use | |——–|————-| |
+<code>feature/</code> | New functionality | | <code>fix/</code> | Bug
+fixes | | <code>chore/</code> | Config, cleanup | | <code>docs/</code> |
+Documentation only |</p>
+<h3 id="stage-and-commit">6.2 Stage and Commit</h3>
+<p>After pushing to your instance and verifying it works:</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add src/</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> commit <span class="at">-m</span> <span class="st">&quot;feat: add incident utility functions&quot;</span></span></code></pre></div>
+<p>Keep commits small and focused. One logical change per commit.</p>
+<h3 id="push-branch-and-open-pr">6.3 Push Branch and Open PR</h3>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">-u</span> origin feature/my-first-change</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> pr create <span class="at">--title</span> <span class="st">&quot;Add incident utility functions&quot;</span> <span class="at">--body</span> <span class="st">&quot;Adds formatIncidentNumber utility to IncidentUtils Script Include.&quot;</span></span></code></pre></div>
+<h3 id="merge-and-clean-up">6.4 Merge and Clean Up</h3>
+<p>After PR is approved:</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gh</span> pr merge <span class="at">--squash</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> checkout main</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> pull</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> branch <span class="at">-d</span> feature/my-first-change</span></code></pre></div>
+<hr />
+<h2 id="phase-7-mcp-setup-claude-servicenow">Phase 7: MCP Setup — Claude
+↔︎ ServiceNow</h2>
+<blockquote>
+<p><strong>What is MCP?</strong> Model Context Protocol (MCP) is an open
+standard that lets Claude Code talk directly to external systems —
+including your ServiceNow instance. With MCP configured, you can ask
+Claude to query tables, create records, and inspect your instance
+without leaving your terminal.</p>
+</blockquote>
+<h3 id="install-the-servicenow-mcp-server">7.1 Install the ServiceNow
+MCP Server</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npx</span> <span class="at">-y</span> @servicenow/mcp-server <span class="at">--help</span></span></code></pre></div>
+<p>This fetches and verifies the MCP server package.</p>
+<h3 id="configure-credentials-local-only">7.2 Configure Credentials
+(Local Only)</h3>
+<p>Edit <code>.claude/settings.json</code> (the one you created in Phase
+4), replacing placeholders with your real PDI values:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mcpServers&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;servicenow&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;npx&quot;</span><span class="fu">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;-y&quot;</span><span class="ot">,</span> <span class="st">&quot;@servicenow/mcp-server&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;SN_INSTANCE_URL&quot;</span><span class="fu">:</span> <span class="st">&quot;https://dev12345.service-now.com&quot;</span><span class="fu">,</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;SN_USERNAME&quot;</span><span class="fu">:</span> <span class="st">&quot;admin&quot;</span><span class="fu">,</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;SN_PASSWORD&quot;</span><span class="fu">:</span> <span class="st">&quot;your-actual-password&quot;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<blockquote>
+<p><strong>CRITICAL:</strong> This file with real credentials must NEVER
+be committed to git. Rename it to
+<code>.claude/settings.local.json</code> (which is gitignored) and keep
+the template version (with placeholders) as
+<code>.claude/settings.json</code>.</p>
+</blockquote>
+<h3 id="restart-claude-code">7.3 Restart Claude Code</h3>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exit Claude Code (Ctrl+C or /exit), then restart</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="ex">claude</span></span></code></pre></div>
+<h3 id="verify-mcp-connection">7.4 Verify MCP Connection</h3>
+<p>In Claude Code, type:</p>
+<pre><code>/mcp</code></pre>
+<p>You should see <code>servicenow</code> listed as a connected
+server.</p>
+<h3 id="try-it-ask-claude-about-your-instance">7.5 Try It — Ask Claude
+About Your Instance</h3>
+<p>Example prompts to try: - “List the tables in my ServiceNow scoped
+app” - “Show me the Script Includes in scope x_snc_training” - “Create a
+test incident record on my instance”</p>
+<p>Claude will use the MCP connection to query your instance in real
+time.</p>
+<hr />
+<h2 id="summary-full-workflow-reference">Summary: Full Workflow
+Reference</h2>
+<pre><code>Day-to-day development loop:
+┌─────────────────────────────────────────────────┐
+│ 1. git checkout -b feature/my-change            │
+│ 2. snc app pull          (sync from instance)   │
+│ 3. Edit files in Claude Code / VS Code          │
+│ 4. snc app push          (push to instance)     │
+│ 5. Verify change in PDI browser                 │
+│ 6. git add src/ &amp;&amp; git commit -m &quot;feat: ...&quot;    │
+│ 7. git push &amp;&amp; gh pr create                     │
+│ 8. Merge PR after review                        │
+└─────────────────────────────────────────────────┘</code></pre>
+</body>
+</html>
