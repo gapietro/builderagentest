@@ -641,14 +641,18 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
       </div>
 
       <h3 class="sub">3.3 &mdash; Download Existing App Metadata (if applicable)</h3>
-      <p>If starting from an app that already exists on your instance:</p>
+      <div class="callout warning">
+        <strong>Prerequisites</strong>
+        <code>now-sdk download</code> requires (1) the app already exists on your instance, and (2) you have already run <code>now-sdk init</code> locally &mdash; it reads <code>now-sdk.json</code> to know which scope to pull.
+      </div>
+      <p>If both conditions are met, sync from your instance:</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk download src/</pre>
       </div>
       <div class="callout tip">
-        <strong>Tip</strong>
-        Always run <code>now-sdk download src/</code> before starting work to ensure your local files are in sync with the instance.
+        <strong>Getting a "No valid scope found" error?</strong>
+        The app isn't on the instance yet. Run <code>now-sdk install</code> first (Phase 5.4) to push your local app up — then <code>download</code> works for subsequent syncs.
       </div>
 
       <h3 class="sub">3.4 &mdash; Verify in the Instance</h3>
@@ -730,9 +734,14 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
       <p>The core Fluent workflow: download from instance &rarr; edit DSL locally &rarr; build &rarr; install back.</p>
 
       <h3 class="sub">5.1 &mdash; Download Before You Start</h3>
+      <p>Run from inside your project directory (where <code>now-sdk.json</code> lives). The app must have been installed to the instance at least once first.</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk download src/</pre>
+      </div>
+      <div class="callout tip">
+        <strong>First time?</strong>
+        If the app is brand new, skip to 5.4 and run <code>now-sdk install</code> first. Download is for subsequent sessions after the app exists on the instance.
       </div>
 
       <h3 class="sub">5.2 &mdash; Edit Files Locally</h3>

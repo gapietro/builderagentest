@@ -195,7 +195,11 @@ my-training-app/
 
 ### 3.3 Download Existing App Metadata (if applicable)
 
-If you're starting from an app that already exists on your instance:
+> **Only applies if** the app already exists on your instance AND you have already
+> run `now-sdk init` locally. The `download` command requires a `now-sdk.json`
+> project config (created by `init`) to know which scope to pull.
+
+If those conditions are met, sync from your instance:
 
 ```bash
 now-sdk download src/
@@ -203,8 +207,9 @@ now-sdk download src/
 
 This pulls the existing app metadata from your PDI into the local `src/` directory.
 
-> **Tip:** Always run `now-sdk download src/` before starting work to make sure
-> your local files are in sync with the instance.
+If you see `No valid scope found` — the app isn't on the instance yet. Run
+`now-sdk install` first (Phase 5.4) to push your local app up, then download
+will work for subsequent syncs.
 
 ### 3.4 Verify in the Instance
 
@@ -290,11 +295,16 @@ The core Fluent workflow: download from instance → edit Fluent DSL locally →
 
 ### 5.1 Download Before You Start
 
-Always sync the latest from your instance before editing:
+Sync the latest from your instance before editing. Run this from inside your
+project directory (where `now-sdk.json` lives):
 
 ```bash
 now-sdk download src/
 ```
+
+> **Prerequisite:** The app must already exist on the instance (installed at
+> least once via `now-sdk install`). If the app is brand new, skip to 5.4 —
+> install first, then download on subsequent sessions.
 
 ### 5.2 Edit Files Locally
 
