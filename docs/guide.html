@@ -907,29 +907,43 @@ https://your-instance.service-now.com/sys_app.do?sys_id=...</pre>
       <h3 class="sub">6.1 &mdash; Create a GitHub Remote Repository</h3>
       <p>Before pushing, create a remote repo on GitHub and link it to your local project.</p>
 
-      <p><strong>Option A — One command (create + link + push):</strong></p>
+      <p><strong>Step 1 &mdash; Create the repo on GitHub:</strong></p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>gh repo create &lt;repo-name&gt; --private --source=. --remote=origin --push</pre>
+        <pre>gh repo create &lt;repo-name&gt; --private</pre>
       </div>
       <p>Example:</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>gh repo create build-agent-troubleshooter --private --source=. --remote=origin --push</pre>
+        <pre>gh repo create tool-build-agent-troubleshooter --private</pre>
       </div>
-      <p>Creates the GitHub repo, sets <code>origin</code> as the remote, and pushes <code>main</code> in one step. Use <code>--public</code> instead of <code>--private</code> if appropriate.</p>
+      <p>Use <code>--public</code> instead of <code>--private</code> if appropriate.</p>
 
-      <p><strong>Option B — Create repo first, then link manually:</strong></p>
+      <p><strong>Step 2 &mdash; Check for an existing remote:</strong></p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre><span class="cmt"># Create the repo on GitHub</span>
-gh repo create &lt;repo-name&gt; --private
+        <pre>git remote -v</pre>
+      </div>
+      <p>If <code>origin</code> is already listed, update it to point to the new repo:</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git remote set-url origin https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;.git</pre>
+      </div>
+      <p>If <code>origin</code> is NOT listed, add it:</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git remote add origin https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;.git</pre>
+      </div>
 
-<span class="cmt"># Add it as the remote</span>
-git remote add origin https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;.git
+      <p><strong>Step 3 &mdash; Push:</strong></p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git push -u origin main</pre>
+      </div>
 
-<span class="cmt"># Push main and set tracking</span>
-git push -u origin main</pre>
+      <div class="callout warning">
+        <strong>"Unable to add remote 'origin'" error?</strong>
+        This happens when <code>gh repo create</code> is run with <code>--remote=origin</code> but a remote named <code>origin</code> already exists (e.g. set by the ServiceNow IDE during git init). The repo is still created on GitHub — just run <code>git remote set-url origin &lt;url&gt;</code> followed by <code>git push -u origin main</code>.
       </div>
 
       <h3 class="sub">6.2 &mdash; Link the ServiceNow IDE to the Remote</h3>
@@ -1051,7 +1065,7 @@ claude mcp add --scope user --transport stdio foundry -- \
           </div>
           <div class="workflow-step">
             <div class="step-num">5</div>
-            <div class="step-text"><code>gh repo create &lt;name&gt; --private --source=. --remote=origin --push</code> &mdash; create GitHub remote and push</div>
+            <div class="step-text"><code>gh repo create &lt;name&gt; --private</code> &rarr; <code>git remote set-url origin &lt;url&gt;</code> &rarr; <code>git push -u origin main</code></div>
           </div>
         </div>
       </div>

@@ -501,32 +501,47 @@ in the Source Control panel.
 
 Before pushing, create a remote repo on GitHub and link it to your local project.
 
-**Option A — One command (create + link + push):**
+**Step 1 — Create the repo on GitHub:**
 
 ```bash
-gh repo create <repo-name> --private --source=. --remote=origin --push
+gh repo create <repo-name> --private
 ```
 
 Example:
 ```bash
-gh repo create build-agent-troubleshooter --private --source=. --remote=origin --push
+gh repo create tool-build-agent-troubleshooter --private
 ```
 
-This creates the GitHub repo, sets `origin` as the remote, and pushes `main`
-in a single step. Use `--public` instead of `--private` if appropriate.
+Use `--public` instead of `--private` if appropriate.
 
-**Option B — Create repo first, then link manually:**
+**Step 2 — Check for an existing remote:**
 
 ```bash
-# Create the repo on GitHub
-gh repo create <repo-name> --private
+git remote -v
+```
 
-# Add it as the remote
+If you see `origin` already listed, update it to point to the new repo:
+
+```bash
+git remote set-url origin https://github.com/<your-username>/<repo-name>.git
+```
+
+If `origin` is NOT listed, add it:
+
+```bash
 git remote add origin https://github.com/<your-username>/<repo-name>.git
+```
 
-# Push main and set tracking
+**Step 3 — Push:**
+
+```bash
 git push -u origin main
 ```
+
+> **"Unable to add remote 'origin'" error?** This happens when `gh repo create`
+> is run with `--remote=origin` but a remote named `origin` already exists
+> (e.g. set by the ServiceNow IDE during git init). The repo is still created
+> on GitHub — just run the `git remote set-url` + `git push` steps above.
 
 ### 6.2 Link the ServiceNow IDE to the Remote
 
@@ -643,7 +658,7 @@ One-time setup (per app):
 │ 2. now-sdk build && now-sdk install --alias <name>  │
 │ 3. Open project in ServiceNow IDE                   │
 │ 4. Source Control → Initialize Repository → "main"  │
-│ 5. gh repo create --private --source=. --remote=origin --push │
+│ 5. gh repo create <name> --private → set remote → push    │
 └─────────────────────────────────────────────────────┘
 
 Day-to-day Fluent development loop:
