@@ -349,3 +349,90 @@ git checkout main
 git pull
 git branch -d feature/my-first-change
 ```
+
+---
+
+## Phase 7: MCP Setup — Claude ↔ ServiceNow
+
+> **What is MCP?** Model Context Protocol (MCP) is an open standard that
+> lets Claude Code talk directly to external systems — including your
+> ServiceNow instance. With MCP configured, you can ask Claude to query
+> tables, create records, and inspect your instance without leaving your
+> terminal.
+
+### 7.1 Install the ServiceNow MCP Server
+
+```bash
+npx -y @servicenow/mcp-server --help
+```
+
+This fetches and verifies the MCP server package.
+
+### 7.2 Configure Credentials (Local Only)
+
+Edit `.claude/settings.json` (the one you created in Phase 4),
+replacing placeholders with your real PDI values:
+
+```json
+{
+  "mcpServers": {
+    "servicenow": {
+      "command": "npx",
+      "args": ["-y", "@servicenow/mcp-server"],
+      "env": {
+        "SN_INSTANCE_URL": "https://dev12345.service-now.com",
+        "SN_USERNAME": "admin",
+        "SN_PASSWORD": "your-actual-password"
+      }
+    }
+  }
+}
+```
+
+> **CRITICAL:** This file with real credentials must NEVER be committed
+> to git. Rename it to `.claude/settings.local.json` (which is gitignored)
+> and keep the template version (with placeholders) as `.claude/settings.json`.
+
+### 7.3 Restart Claude Code
+
+```bash
+# Exit Claude Code (Ctrl+C or /exit), then restart
+claude
+```
+
+### 7.4 Verify MCP Connection
+
+In Claude Code, type:
+
+```
+/mcp
+```
+
+You should see `servicenow` listed as a connected server.
+
+### 7.5 Try It — Ask Claude About Your Instance
+
+Example prompts to try:
+- "List the tables in my ServiceNow scoped app"
+- "Show me the Script Includes in scope x_snc_training"
+- "Create a test incident record on my instance"
+
+Claude will use the MCP connection to query your instance in real time.
+
+---
+
+## Summary: Full Workflow Reference
+
+```
+Day-to-day development loop:
+┌─────────────────────────────────────────────────┐
+│ 1. git checkout -b feature/my-change            │
+│ 2. snc app pull          (sync from instance)   │
+│ 3. Edit files in Claude Code / VS Code          │
+│ 4. snc app push          (push to instance)     │
+│ 5. Verify change in PDI browser                 │
+│ 6. git add src/ && git commit -m "feat: ..."    │
+│ 7. git push && gh pr create                     │
+│ 8. Merge PR after review                        │
+└─────────────────────────────────────────────────┘
+```
