@@ -186,3 +186,69 @@ Log into your PDI and navigate to:
 **App Engine Studio → My Apps** (or **System Applications → Studio**)
 
 Your new app should appear in the list.
+
+---
+
+## Phase 4: Connect to Claude Code
+
+> **What is Claude Code?** Claude Code (CC) is Anthropic's AI-powered CLI
+> development environment. It understands your codebase and can help you
+> write, review, and push ServiceNow app code — including talking directly
+> to your instance via MCP (covered in Phase 7).
+
+### 4.1 Open the Project in Claude Code
+
+From your project root:
+
+```bash
+claude
+```
+
+Claude Code will start and index your project files.
+
+### 4.2 Create a CLAUDE.md
+
+A `CLAUDE.md` file gives Claude context about your project.
+Create one at the project root:
+
+```markdown
+# My Training App — ServiceNow Scoped App
+
+## Project Overview
+ServiceNow scoped app (scope: x_snc_training) on PDI instance.
+Primary development via ServiceNow CLI (snc) + Claude Code.
+
+## Key Commands
+- Pull from instance: `snc app pull`
+- Push to instance: `snc app push`
+- App source: `src/`
+
+## Conventions
+- All changes pushed to instance AND committed to git
+- Never commit snc credentials or .snc/ directory
+- Branch naming: feature/, fix/, chore/
+```
+
+### 4.3 MCP Settings (Placeholder — See Phase 7)
+
+Create `.claude/settings.json` at your project root with this template:
+
+```json
+{
+  "mcpServers": {
+    "servicenow": {
+      "command": "npx",
+      "args": ["-y", "@servicenow/mcp-server"],
+      "env": {
+        "SN_INSTANCE_URL": "https://your-instance.service-now.com",
+        "SN_USERNAME": "your-username",
+        "SN_PASSWORD": "your-password"
+      }
+    }
+  }
+}
+```
+
+> **Important:** This template uses placeholder values and is safe to commit.
+> When you fill in real credentials, save to `.claude/settings.local.json`
+> instead (which is gitignored). Never commit real credentials.
