@@ -719,29 +719,8 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
 - Branch naming: feature/, fix/, chore/</pre>
       </div>
 
-      <h3 class="sub">4.3 &mdash; MCP Settings Template</h3>
-      <p>Create <code>.claude/settings.json</code>:</p>
-      <div class="code-block">
-        <div class="code-label">json <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>{
-  <span class="str">"mcpServers"</span>: {
-    <span class="str">"fluent-mcp"</span>: {
-      <span class="str">"command"</span>: <span class="str">"npx"</span>,
-      <span class="str">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"@modesty/fluent-mcp"</span>],
-      <span class="str">"env"</span>: {
-        <span class="str">"SN_INSTANCE_URL"</span>: <span class="str">"https://your-instance.service-now.com"</span>,
-        <span class="str">"SN_AUTH_TYPE"</span>: <span class="str">"basic"</span>,
-        <span class="str">"SN_USER_NAME"</span>: <span class="str">"your-username"</span>,
-        <span class="str">"SN_PASSWORD"</span>: <span class="str">"your-password"</span>
-      }
-    }
-  }
-}</pre>
-      </div>
-      <div class="callout warning">
-        <strong>Credentials</strong>
-        This template uses placeholder values and is safe to commit. For real credentials, save to <code>.claude/settings.local.json</code> (gitignored). Never commit real credentials.
-      </div>
+      <h3 class="sub">4.3 &mdash; MCP Setup (See Phase 7)</h3>
+      <p>MCP is configured once via the <code>claude mcp add</code> command — not via a settings file. See Phase 7 for the full setup (takes under a minute).</p>
     </section>
 
     <!-- Phase 5 -->
@@ -962,63 +941,32 @@ git branch -d feature/my-first-change</pre>
       </div>
       <div class="callout">
         <strong>What is MCP?</strong>
-        Model Context Protocol (MCP) lets Claude Code talk directly to your ServiceNow instance. With MCP configured, you can ask Claude to query tables, inspect app metadata, and interact with your instance without leaving your terminal.
-      </div>
-      <div class="callout warning">
-        <strong>Note</strong>
-        There is no official ServiceNow MCP server. This guide uses <code>@modesty/fluent-mcp</code> &mdash; a community package that wraps the Fluent SDK.
+        Model Context Protocol (MCP) lets Claude Code talk directly to your ServiceNow instance. With MCP configured, you can ask Claude to interact with your instance, manage tools, and run agentic workflows without leaving your terminal.
       </div>
 
-      <h3 class="sub">7.1 &mdash; Install fluent-mcp</h3>
+      <h3 class="sub">7.1 &mdash; Register the MCP Server</h3>
+      <p>Run this once. Using <code>--scope user</code> makes the server available in every project on your machine — no need to repeat per project.</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>npx -y @modesty/fluent-mcp --help</pre>
+        <pre><span class="cmt"># User scope (recommended — available in every project)</span>
+claude mcp add --scope user --transport stdio foundry -- \
+  node ~/projects/tool-foundry-mcp/dist/index.js</pre>
       </div>
 
-      <h3 class="sub">7.2 &mdash; Configure Credentials (Local Only)</h3>
-      <p>Edit <code>.claude/settings.json</code>, replacing placeholders with real values:</p>
-      <div class="code-block">
-        <div class="code-label">json <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>{
-  <span class="str">"mcpServers"</span>: {
-    <span class="str">"fluent-mcp"</span>: {
-      <span class="str">"command"</span>: <span class="str">"npx"</span>,
-      <span class="str">"args"</span>: [<span class="str">"-y"</span>, <span class="str">"@modesty/fluent-mcp"</span>],
-      <span class="str">"env"</span>: {
-        <span class="str">"SN_INSTANCE_URL"</span>: <span class="str">"https://dev12345.service-now.com"</span>,
-        <span class="str">"SN_AUTH_TYPE"</span>: <span class="str">"basic"</span>,
-        <span class="str">"SN_USER_NAME"</span>: <span class="str">"admin"</span>,
-        <span class="str">"SN_PASSWORD"</span>: <span class="str">"your-actual-password"</span>
-      }
-    }
-  }
-}</pre>
-      </div>
-      <div class="callout danger">
-        <strong>Critical</strong>
-        This file with real credentials must NEVER be committed to git. Rename it to <code>.claude/settings.local.json</code> (gitignored) and keep the placeholder template as <code>.claude/settings.json</code>.
-      </div>
-
-      <h3 class="sub">7.3 &mdash; Restart Claude Code</h3>
+      <h3 class="sub">7.2 &mdash; Verify Registration</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre><span class="cmt"># Exit (Ctrl+C or /exit), then restart</span>
-claude</pre>
+        <pre>claude mcp list</pre>
       </div>
+      <p>You should see <code>foundry</code> listed in the output.</p>
 
-      <h3 class="sub">7.4 &mdash; Verify MCP Connection</h3>
-      <div class="code-block">
-        <div class="code-label">claude code <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>/mcp</pre>
-      </div>
-      <p>You should see <code>fluent-mcp</code> listed as a connected server.</p>
-
-      <h3 class="sub">7.5 &mdash; Try It</h3>
+      <h3 class="sub">7.3 &mdash; Try It</h3>
       <ul>
-        <li>"List the Script Includes in my ServiceNow scoped app"</li>
-        <li>"Show me the tables defined in scope x_snc_training"</li>
-        <li>"What app metadata is installed on my instance?"</li>
+        <li>"List the tools available in foundry"</li>
+        <li>"Show me the ServiceNow app metadata for my current project"</li>
+        <li>"What Script Includes are in my scoped app?"</li>
       </ul>
+      <p>Claude will use the MCP connection to interact with your instance in real time.</p>
     </section>
 
     <!-- Summary -->

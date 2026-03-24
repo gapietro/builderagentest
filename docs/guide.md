@@ -283,30 +283,10 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
 - Branch naming: feature/, fix/, chore/
 ```
 
-### 4.3 MCP Settings (Placeholder — See Phase 7)
+### 4.3 MCP Setup (See Phase 7)
 
-Create `.claude/settings.json` at your project root with this template:
-
-```json
-{
-  "mcpServers": {
-    "fluent-mcp": {
-      "command": "npx",
-      "args": ["-y", "@modesty/fluent-mcp"],
-      "env": {
-        "SN_INSTANCE_URL": "https://your-instance.service-now.com",
-        "SN_AUTH_TYPE": "basic",
-        "SN_USER_NAME": "your-username",
-        "SN_PASSWORD": "your-password"
-      }
-    }
-  }
-}
-```
-
-> **Important:** This template uses placeholder values and is safe to commit.
-> When you fill in real credentials, save to `.claude/settings.local.json`
-> instead (which is gitignored). Never commit real credentials.
+MCP is configured once via the `claude mcp add` command — not via a
+settings file. See Phase 7 for the full setup (takes under a minute).
 
 ---
 
@@ -553,72 +533,37 @@ git branch -d feature/my-first-change
 
 > **What is MCP?** Model Context Protocol (MCP) is an open standard that
 > lets Claude Code talk directly to external systems — including your
-> ServiceNow instance. With MCP configured, you can ask Claude to query
-> tables, inspect your app metadata, and interact with your instance
-> without leaving your terminal.
->
-> **Note:** There is no official ServiceNow MCP server. This guide uses
-> `fluent-mcp` — a community package that wraps the ServiceNow SDK.
+> ServiceNow instance. With MCP configured, you can ask Claude to interact
+> with your instance, manage tools, and run agentic workflows without
+> leaving your terminal.
 
-### 7.1 Install fluent-mcp
+### 7.1 Register the MCP Server
 
-```bash
-npx -y @modesty/fluent-mcp --help
-```
-
-This fetches and verifies the fluent-mcp package.
-
-### 7.2 Configure Credentials (Local Only)
-
-Edit `.claude/settings.json` (the one you created in Phase 4),
-replacing placeholders with your real PDI values:
-
-```json
-{
-  "mcpServers": {
-    "fluent-mcp": {
-      "command": "npx",
-      "args": ["-y", "@modesty/fluent-mcp"],
-      "env": {
-        "SN_INSTANCE_URL": "https://dev12345.service-now.com",
-        "SN_AUTH_TYPE": "basic",
-        "SN_USER_NAME": "admin",
-        "SN_PASSWORD": "your-actual-password"
-      }
-    }
-  }
-}
-```
-
-> **CRITICAL:** This file with real credentials must NEVER be committed
-> to git. Rename it to `.claude/settings.local.json` (which is gitignored)
-> and keep the template version (with placeholders) as `.claude/settings.json`.
-
-### 7.3 Restart Claude Code
+Run this once. Using `--scope user` makes the server available in every
+project on your machine — you won't need to repeat this per project.
 
 ```bash
-# Exit Claude Code (Ctrl+C or /exit), then restart
-claude
+# User scope (recommended — available in every project)
+claude mcp add --scope user --transport stdio foundry -- \
+  node ~/projects/tool-foundry-mcp/dist/index.js
 ```
 
-### 7.4 Verify MCP Connection
+### 7.2 Verify Registration
 
-In Claude Code, type:
-
-```
-/mcp
+```bash
+claude mcp list
 ```
 
-You should see `fluent-mcp` listed as a connected server.
+You should see `foundry` listed in the output.
 
-### 7.5 Try It — Ask Claude About Your Instance
+### 7.3 Try It — Ask Claude About Your Instance
 
-Example prompts to try:
-- "List the Script Includes in my ServiceNow scoped app"
-- "Show me the tables defined in scope x_snc_training"
-- "What app metadata is installed on my instance?"
+Example prompts to try in Claude Code:
+- "List the tools available in foundry"
+- "Show me the ServiceNow app metadata for my current project"
+- "What Script Includes are in my scoped app?"
 
-Claude will use the MCP connection to query your instance in real time.
+Claude will use the MCP connection to interact with your instance in real time.
 
 ---
 
