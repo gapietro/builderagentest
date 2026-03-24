@@ -738,20 +738,18 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
         <div class="phase-number">5</div>
         <h2>Development Loop</h2>
       </div>
-      <p>The core Fluent workflow: download from instance &rarr; edit DSL locally &rarr; build &rarr; install back.</p>
+      <p>The core Fluent workflow: edit locally &rarr; build &rarr; install to instance. Download is only used when changes were made directly on the instance.</p>
 
-      <h3 class="sub">5.1 &mdash; Download Before You Start</h3>
-      <p>Run from inside your project directory (where <code>now-sdk.json</code> lives). The app must have been installed to the instance at least once first.</p>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk download src/</pre>
-      </div>
-      <div class="callout tip">
-        <strong>First time?</strong>
-        If the app is brand new, skip to 5.4 and run <code>now-sdk install</code> first. Download is for subsequent sessions after the app exists on the instance.
-      </div>
+      <table>
+        <thead><tr><th>Command</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><code>now-sdk build</code></td><td>After editing — compiles Fluent DSL to <code>dist/</code>. <strong>Required before install.</strong></td></tr>
+          <tr><td><code>now-sdk install</code></td><td>After building — deploys <code>dist/</code> to your instance.</td></tr>
+          <tr><td><code>now-sdk download src/</code></td><td>Only when changes were made directly on the instance (e.g. in Studio). Syncs them back to local.</td></tr>
+        </tbody>
+      </table>
 
-      <h3 class="sub">5.2 &mdash; Edit Files Locally</h3>
+      <h3 class="sub">5.1 &mdash; Edit Files Locally</h3>
       <p>Open files in <code>src/</code> using VS Code or Claude Code. You'll be writing Fluent DSL:</p>
       <div class="code-block">
         <div class="code-label">typescript <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
@@ -768,30 +766,37 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
         Ask Claude Code to help &mdash; e.g., <em>"Add a utility function to IncidentUtils that formats an incident number as INC0001234."</em>
       </div>
 
-      <h3 class="sub">5.3 &mdash; Build (Compile Only)</h3>
-      <p>Compile and check for errors without deploying to the instance:</p>
+      <h3 class="sub">5.2 &mdash; Build</h3>
+      <div class="callout danger">
+        <strong>Required before every install</strong>
+        <code>now-sdk build</code> compiles your source into <code>dist/</code>. <code>now-sdk install</code> will fail with "No files found" if you skip this step.
+      </div>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk build</pre>
       </div>
+      <p>Fix any errors before proceeding. The <code>dist/</code> directory is created or updated by this command.</p>
 
-      <h3 class="sub">5.4 &mdash; Install to Instance</h3>
+      <h3 class="sub">5.3 &mdash; Install to Instance</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk install</pre>
       </div>
-      <p>This compiles your Fluent DSL and installs the metadata to your PDI. Verify in Studio that your changes are there.</p>
+      <p>Deploys the compiled <code>dist/</code> to your PDI. Verify in Studio that your changes are there.</p>
 
-      <h3 class="sub">5.5 &mdash; Handling Conflicts</h3>
+      <h3 class="sub">5.4 &mdash; Download (Only When Needed)</h3>
+      <p>Use <strong>only</strong> if changes were made directly on the instance (e.g. in Studio) and you need to pull them back to local.</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk download src/ <span class="cmt"># Get latest from instance first</span>
-<span class="cmt"># Review and merge any differences manually</span>
-now-sdk install       <span class="cmt"># Then install your changes</span></pre>
+        <pre>now-sdk download src/</pre>
       </div>
       <div class="callout warning">
+        <strong>Scope error?</strong>
+        "No valid scope found" means the scope in <code>now.config.json</code> doesn't exist on the target instance &mdash; usually because the project was initialized against a different instance. Re-run <code>now-sdk init</code> or update <code>now.config.json</code> to point to the correct instance and scope.
+      </div>
+      <div class="callout tip">
         <strong>Rule of thumb</strong>
-        Download first, always. Especially if others share the instance.
+        Local is the source of truth. Edit locally &rarr; build &rarr; install. Only use <code>download</code> when you need to recover instance-side edits.
       </div>
     </section>
 
@@ -924,35 +929,35 @@ claude</pre>
           </div>
           <div class="workflow-step">
             <div class="step-num">2</div>
-            <div class="step-text"><code>now-sdk download src/</code> &mdash; sync latest from instance</div>
-          </div>
-          <div class="workflow-step">
-            <div class="step-num">3</div>
             <div class="step-text">Edit Fluent DSL in Claude Code or VS Code</div>
           </div>
           <div class="workflow-step">
+            <div class="step-num">3</div>
+            <div class="step-text"><code>now-sdk build</code> &mdash; compile DSL to <code>dist/</code> (required first)</div>
+          </div>
+          <div class="workflow-step">
             <div class="step-num">4</div>
-            <div class="step-text"><code>now-sdk build</code> &mdash; compile and check for errors</div>
+            <div class="step-text"><code>now-sdk install</code> &mdash; deploy <code>dist/</code> to PDI</div>
           </div>
           <div class="workflow-step">
             <div class="step-num">5</div>
-            <div class="step-text"><code>now-sdk install</code> &mdash; compile + install to PDI</div>
-          </div>
-          <div class="workflow-step">
-            <div class="step-num">6</div>
             <div class="step-text">Verify the change in your PDI browser</div>
           </div>
           <div class="workflow-step">
-            <div class="step-num">7</div>
+            <div class="step-num">6</div>
             <div class="step-text"><code>git add src/ &amp;&amp; git commit -m "feat: ..."</code></div>
           </div>
           <div class="workflow-step">
-            <div class="step-num">8</div>
+            <div class="step-num">7</div>
             <div class="step-text"><code>git push &amp;&amp; gh pr create</code></div>
           </div>
           <div class="workflow-step">
-            <div class="step-num">9</div>
+            <div class="step-num">8</div>
             <div class="step-text">Merge PR after review</div>
+          </div>
+          <div class="workflow-step" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+            <div class="step-num" style="background:rgba(227,179,65,0.15);border-color:rgba(227,179,65,0.4);color:var(--warning);">!</div>
+            <div class="step-text" style="font-size:12px;"><strong style="color:var(--warning);">Only when needed:</strong> <code>now-sdk download src/</code> &mdash; use only when changes were made directly on the instance and need to be pulled back to local</div>
           </div>
         </div>
       </div>

@@ -298,22 +298,22 @@ Create `.claude/settings.json` at your project root with this template:
 
 ## Phase 5: Development Loop
 
-The core Fluent workflow: download from instance → edit Fluent DSL locally → install back.
+The core Fluent workflow: edit locally → build → install to instance.
+Download is only used to sync changes made directly on the instance back to local.
 
-### 5.1 Download Before You Start
+---
 
-Sync the latest from your instance before editing. Run this from inside your
-project directory (where `now-sdk.json` lives):
+### When to use each command
 
-```bash
-now-sdk download src/
-```
+| Command | When to use |
+|---------|-------------|
+| `now-sdk build` | After editing — compiles Fluent DSL to `dist/`. **Required before install.** |
+| `now-sdk install` | After building — deploys `dist/` to your instance. |
+| `now-sdk download src/` | Only when changes were made directly on the instance (e.g. in Studio). Syncs them back to local. |
 
-> **Prerequisite:** The app must already exist on the instance (installed at
-> least once via `now-sdk install`). If the app is brand new, skip to 5.4 —
-> install first, then download on subsequent sessions.
+---
 
-### 5.2 Edit Files Locally
+### 5.1 Edit Files Locally
 
 Open files in `src/` using VS Code or Claude Code.
 You'll be writing Fluent DSL — TypeScript-like metadata declarations:
@@ -331,36 +331,44 @@ export const IncidentUtils = scriptInclude({
 > **Tip:** Ask Claude Code to help — e.g., "Add a utility function to
 > IncidentUtils that formats an incident number as INC0001234."
 
-### 5.3 Build (Optional — Compile Only)
+### 5.2 Build — Compile Fluent DSL
 
-To compile and check for errors without deploying:
+**This step is required before every install.** It compiles your source into
+`dist/`, which is what gets deployed to the instance.
 
 ```bash
 now-sdk build
 ```
 
-### 5.4 Install to Instance
+Fix any errors reported before proceeding. The `dist/` directory is created
+(or updated) by this command — `now-sdk install` will fail if you skip it.
+
+### 5.3 Install to Instance
 
 ```bash
 now-sdk install
 ```
 
-This compiles your Fluent DSL and installs the resulting metadata to your PDI.
+Deploys the compiled `dist/` to your PDI. Verify in the instance: open the
+record you changed in Studio and confirm your edits are there.
 
-Verify in the instance: open the record you changed in Studio or the
-application navigator and confirm your edits are there.
+### 5.4 Download (Only When Needed)
 
-### 5.5 Handling Conflicts
-
-If your instance has changes that aren't in your local files:
+Use `now-sdk download` **only** if changes were made directly on the instance
+(e.g. someone edited a record in Studio) and you need to pull them back to local.
 
 ```bash
-now-sdk download src/ # Get latest from instance first
-# Review and merge any differences manually
-now-sdk install       # Then install your changes
+now-sdk download src/
 ```
 
-> **Rule of thumb:** Download first, always. Especially if others share the instance.
+> **Scope error?** If you see `No valid scope found`, the scope in your
+> `now.config.json` doesn't exist on the target instance. This happens when
+> the project was initialized against a different instance. Re-run
+> `now-sdk init` or update `now.config.json` to point to the correct instance
+> and scope.
+
+> **Rule of thumb:** Local is the source of truth. Edit locally → build → install.
+> Only download when you have no choice (instance-side edits you need back).
 
 ---
 
@@ -492,13 +500,15 @@ Claude will use the MCP connection to query your instance in real time.
 Day-to-day Fluent development loop:
 ┌─────────────────────────────────────────────────────┐
 │ 1. git checkout -b feature/my-change                │
-│ 2. now-sdk download src/ (sync from instance)       │
-│ 3. Edit Fluent DSL in Claude Code / VS Code         │
-│ 4. now-sdk build         (compile + check errors)   │
-│ 5. now-sdk install       (compile + push to PDI)    │
-│ 6. Verify change in PDI browser                     │
-│ 7. git add src/ && git commit -m "feat: ..."        │
-│ 8. git push && gh pr create                         │
-│ 9. Merge PR after review                            │
+│ 2. Edit Fluent DSL in Claude Code / VS Code         │
+│ 3. now-sdk build         (compile DSL → dist/)      │
+│ 4. now-sdk install       (deploy dist/ to PDI)      │
+│ 5. Verify change in PDI browser                     │
+│ 6. git add src/ && git commit -m "feat: ..."        │
+│ 7. git push && gh pr create                         │
+│ 8. Merge PR after review                            │
 └─────────────────────────────────────────────────────┘
+
+Note: Use `now-sdk download src/` only when changes were made directly
+on the instance and you need to pull them back to local.
 ```
