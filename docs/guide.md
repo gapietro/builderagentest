@@ -137,3 +137,52 @@ If you see an authentication error:
 - Double-check your instance URL (no trailing slash)
 - Verify your credentials work by logging into the instance in a browser
 - Re-run `snc configure`
+
+---
+
+## Phase 3: Create a Scoped App
+
+> **What is a scoped app?** In ServiceNow, all custom development lives
+> inside "scoped applications" — isolated namespaces that prevent conflicts
+> with other apps and the platform itself. A scope looks like `x_acme_myapp`.
+> If you already know this, skip ahead to 3.1.
+
+### 3.1 Create the App
+
+```bash
+snc app create
+```
+
+You will be prompted for:
+- **App name:** e.g., `My Training App`
+- **Scope:** e.g., `x_snc_training` (auto-suggested, you can customize)
+- **Version:** `1.0.0`
+
+snc creates the app on your PDI and returns an app sys_id.
+
+### 3.2 Pull the App to Local
+
+```bash
+snc app pull
+```
+
+This syncs the initial app structure from your PDI into a local `src/` directory.
+The structure will look like:
+
+```
+src/
+├── app_scope_x_snc_training/
+│   ├── sys_app.xml
+│   ├── sys_scope.xml
+│   └── ...
+```
+
+> **Tip:** Always run `snc app pull` before starting work to make sure
+> your local files are in sync with the instance.
+
+### 3.3 Verify in the Instance
+
+Log into your PDI and navigate to:
+**App Engine Studio → My Apps** (or **System Applications → Studio**)
+
+Your new app should appear in the list.
