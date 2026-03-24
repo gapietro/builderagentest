@@ -252,3 +252,100 @@ Create `.claude/settings.json` at your project root with this template:
 > **Important:** This template uses placeholder values and is safe to commit.
 > When you fill in real credentials, save to `.claude/settings.local.json`
 > instead (which is gitignored). Never commit real credentials.
+
+---
+
+## Phase 5: Development Loop
+
+The core workflow: pull from instance → edit locally → push back.
+
+### 5.1 Pull Before You Start
+
+Always sync the latest from your instance before editing:
+
+```bash
+snc app pull
+```
+
+### 5.2 Edit Files Locally
+
+Open files in `src/` using VS Code or Claude Code.
+Common files you'll edit:
+- `src/<scope>/sys_script_include_*.xml` — Script Includes
+- `src/<scope>/sys_ui_page_*.xml` — UI Pages
+- `src/<scope>/sys_rest_message_*.xml` — REST Messages
+
+> **Tip:** Ask Claude Code to help — e.g., "Add a utility function to
+> the IncidentUtils Script Include that formats incident numbers."
+
+### 5.3 Push to Instance
+
+```bash
+snc app push
+```
+
+This uploads your local changes to the PDI.
+
+Verify in the instance: open the record you changed in Studio or the
+application navigator and confirm your edits are there.
+
+### 5.4 Handling Conflicts
+
+If snc reports a conflict (instance has changes you don't have locally):
+
+```bash
+snc app pull          # Get latest from instance first
+# Resolve any file conflicts manually
+snc app push          # Then push your changes
+```
+
+> **Rule of thumb:** Pull first, always. Especially if others share the instance.
+
+---
+
+## Phase 6: Git Workflow
+
+### 6.1 Create a Feature Branch
+
+Never commit directly to main:
+
+```bash
+git checkout -b feature/my-first-change
+```
+
+Branch naming:
+| Prefix | When to use |
+|--------|-------------|
+| `feature/` | New functionality |
+| `fix/` | Bug fixes |
+| `chore/` | Config, cleanup |
+| `docs/` | Documentation only |
+
+### 6.2 Stage and Commit
+
+After pushing to your instance and verifying it works:
+
+```bash
+git add src/
+git commit -m "feat: add incident utility functions"
+```
+
+Keep commits small and focused. One logical change per commit.
+
+### 6.3 Push Branch and Open PR
+
+```bash
+git push -u origin feature/my-first-change
+gh pr create --title "Add incident utility functions" --body "Adds formatIncidentNumber utility to IncidentUtils Script Include."
+```
+
+### 6.4 Merge and Clean Up
+
+After PR is approved:
+
+```bash
+gh pr merge --squash
+git checkout main
+git pull
+git branch -d feature/my-first-change
+```
