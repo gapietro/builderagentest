@@ -145,12 +145,7 @@
       line-height: 1.6;
     }
 
-    .hero-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 20px;
-    }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
 
     .tag {
       font-size: 11px;
@@ -195,11 +190,6 @@
       margin-bottom: 2px;
     }
 
-    /* Toolchain table section */
-    .toolchain-section {
-      margin-bottom: 48px;
-    }
-
     /* Phase sections */
     .phase-section {
       margin-bottom: 64px;
@@ -230,11 +220,7 @@
       flex-shrink: 0;
     }
 
-    .phase-header h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-    }
+    .phase-header h2 { font-size: 22px; font-weight: 700; color: var(--text); }
 
     h3.sub {
       font-size: 14px;
@@ -329,11 +315,7 @@
       color: #e6edf3;
     }
 
-    pre.standalone {
-      border-top: 1px solid var(--border);
-      border-radius: 8px;
-    }
-
+    pre.standalone { border-top: 1px solid var(--border); border-radius: 8px; }
     pre .cmt { color: #8b949e; font-style: italic; }
     pre .str { color: #a5d6ff; }
     pre .kw  { color: #ff7b72; }
@@ -350,7 +332,6 @@
 
     /* Tables */
     table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
-
     th {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -362,7 +343,6 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-
     td { border: 1px solid var(--border); padding: 8px 14px; color: var(--text); }
     tr:hover td { background: rgba(255,255,255,0.02); }
 
@@ -390,7 +370,6 @@
     }
 
     .workflow-steps { display: flex; flex-direction: column; gap: 8px; }
-
     .workflow-step { display: flex; align-items: flex-start; gap: 14px; }
 
     .step-num {
@@ -412,14 +391,12 @@
     .step-text { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
     .step-text code { font-size: 12px; }
 
-    /* Paragraphs */
     p { color: var(--text-muted); margin: 10px 0; }
     p strong { color: var(--text); }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
     hr { border: none; border-top: 1px solid var(--border); margin: 48px 0; }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
@@ -439,13 +416,12 @@
     <div class="nav-section">
       <span class="nav-section-label">Overview</span>
       <a href="#prereqs" class="nav-link">Prerequisites</a>
-      <a href="#toolchain" class="nav-link">Toolchain</a>
     </div>
 
     <div class="nav-section">
       <span class="nav-section-label">Setup</span>
       <a href="#phase1" class="nav-link"><span class="nav-phase-badge">1</span> Installation</a>
-      <a href="#phase2" class="nav-link"><span class="nav-phase-badge">2</span> PDI Auth</a>
+      <a href="#phase2" class="nav-link"><span class="nav-phase-badge">2</span> Authentication</a>
       <a href="#phase3" class="nav-link"><span class="nav-phase-badge">3</span> Fluent App</a>
       <a href="#phase4" class="nav-link"><span class="nav-phase-badge">4</span> Claude Code</a>
     </div>
@@ -476,9 +452,9 @@
         in Claude Code, and syncing code to your PDI and GitHub.
       </p>
       <div class="hero-tags">
-        <span class="tag">now-sdk</span>
+        <span class="tag">now-sdk 4.4</span>
         <span class="tag">Fluent DSL</span>
-        <span class="tag">snc CLI</span>
+        <span class="tag">Node.js v20+</span>
         <span class="tag">Claude Code</span>
         <span class="tag">MCP</span>
         <span class="tag">GitHub</span>
@@ -505,29 +481,8 @@
         <li>A ServiceNow PDI (Personal Developer Instance)</li>
         <li>A GitHub account with SSH or HTTPS access configured</li>
         <li>macOS or Linux (Windows WSL2 also works)</li>
+        <li>Node.js <strong>v20.18.0 or later</strong> &mdash; <a href="https://nodejs.org" target="_blank">nodejs.org</a>, choose LTS</li>
       </ul>
-    </section>
-
-    <!-- Toolchain overview -->
-    <section id="toolchain" class="phase-section">
-      <div class="phase-header"><h2>Toolchain Overview</h2></div>
-      <p>This guide uses <strong>two complementary ServiceNow CLI tools</strong>:</p>
-      <table>
-        <thead><tr><th>Tool</th><th>Purpose</th><th>Install Method</th></tr></thead>
-        <tbody>
-          <tr>
-            <td><code>snc</code></td>
-            <td>Instance authentication &amp; profile management</td>
-            <td>Binary installer</td>
-          </tr>
-          <tr>
-            <td><code>now-sdk</code></td>
-            <td>Fluent pro-code app development (init, download, install)</td>
-            <td>npm</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>Both are required. <code>snc</code> manages your instance connection; <code>now-sdk</code> is the Fluent development engine.</p>
     </section>
 
     <!-- Phase 1 -->
@@ -540,50 +495,14 @@
       <h3 class="sub">1.1 &mdash; Check Existing Tools</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>snc --version        <span class="cmt"># ServiceNow CLI (profile management)</span>
-now-sdk --version    <span class="cmt"># ServiceNow SDK (Fluent dev engine)</span>
+        <pre>now-sdk --version    <span class="cmt"># ServiceNow SDK (Fluent dev engine)</span>
 node --version       <span class="cmt"># Node.js &mdash; need v20.18.0+</span>
+npm --version        <span class="cmt"># npm &mdash; need v8.19.3+</span>
 git --version        <span class="cmt"># Git</span>
 gh --version         <span class="cmt"># GitHub CLI</span></pre>
       </div>
-      <p>If any command returns <code>command not found</code>, follow the install steps below.</p>
 
-      <h3 class="sub">1.2 &mdash; Install / Upgrade ServiceNow CLI (snc)</h3>
-      <div class="callout">
-        <strong>What is snc?</strong>
-        The ServiceNow CLI handles instance authentication and profile management. It is a <strong>binary installer</strong> &mdash; not available via npm or brew.
-      </div>
-      <p><strong>Download snc:</strong></p>
-      <ol>
-        <li>Go to: <a href="https://developer.servicenow.com" target="_blank">developer.servicenow.com</a></li>
-        <li>Sign in with your ServiceNow credentials</li>
-        <li>Navigate to: <strong>Tools &rarr; ServiceNow CLI</strong></li>
-        <li>Download the installer for your OS and run it</li>
-      </ol>
-      <p><strong>Alternative:</strong> Download from <a href="https://github.com/ServiceNow/servicenow-cli/releases/latest" target="_blank">GitHub releases</a> (no Store credentials required).</p>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>snc --version</pre>
-      </div>
-      <p>Expected output:</p>
-      <pre class="standalone">snc/1.1.3 &lt;os&gt;-&lt;arch&gt; node-vxx.x.x</pre>
-
-      <h3 class="sub">1.3 &mdash; Install ServiceNow SDK (now-sdk)</h3>
-      <div class="callout">
-        <strong>What is now-sdk?</strong>
-        The ServiceNow SDK is the Fluent pro-code development engine. It compiles Fluent DSL to ServiceNow metadata and manages app lifecycle: <code>init</code>, <code>download</code>, <code>install</code>.
-      </div>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>npm install -g @servicenow/sdk</pre>
-      </div>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk --version</pre>
-      </div>
-      <p>Expected output: <code>4.x.x</code></p>
-
-      <h3 class="sub">1.4 &mdash; Install Node.js (if needed)</h3>
+      <h3 class="sub">1.2 &mdash; Install Node.js (if needed)</h3>
       <p>The ServiceNow SDK requires <strong>Node.js v20.18.0 or later</strong>.</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
@@ -594,8 +513,28 @@ gh --version         <span class="cmt"># GitHub CLI</span></pre>
         <li><strong>macOS (recommended):</strong> <code>brew install node@20</code></li>
         <li><strong>All platforms:</strong> Download <strong>LTS</strong> from <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
       </ul>
+      <div class="code-block">
+        <div class="code-label">bash &mdash; verify <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>node --version   <span class="cmt"># Should show v20.18.0 or higher</span>
+npm --version    <span class="cmt"># Should show v8.19.3 or higher</span></pre>
+      </div>
 
-      <h3 class="sub">1.5 &mdash; Install GitHub CLI (if needed)</h3>
+      <h3 class="sub">1.3 &mdash; Install ServiceNow SDK (now-sdk)</h3>
+      <div class="callout">
+        <strong>What is now-sdk?</strong>
+        The ServiceNow SDK is the Fluent pro-code development engine. It compiles Fluent DSL (TypeScript-like metadata) to ServiceNow records and manages the full app lifecycle: <code>init</code>, <code>download</code>, <code>build</code>, <code>install</code>.
+      </div>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>npm install -g @servicenow/sdk</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">bash &mdash; verify <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>now-sdk --version</pre>
+      </div>
+      <p>Expected output: <code>4.4.x</code></p>
+
+      <h3 class="sub">1.4 &mdash; Install GitHub CLI (if needed)</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre><span class="cmt"># macOS</span>
@@ -610,7 +549,7 @@ gh --version   <span class="cmt"># Verify</span></pre>
       </div>
       <p>Follow prompts &mdash; GitHub.com &rarr; HTTPS &rarr; authenticate via browser.</p>
 
-      <h3 class="sub">1.6 &mdash; Configure Git Identity</h3>
+      <h3 class="sub">1.5 &mdash; Configure Git Identity</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>git config --global user.name <span class="str">"Your Name"</span>
@@ -624,53 +563,45 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
     <section id="phase2" class="phase-section">
       <div class="phase-header">
         <div class="phase-number">2</div>
-        <h2>PDI Authentication</h2>
+        <h2>Instance Authentication</h2>
       </div>
       <div class="callout">
-        You already have a PDI through the internal provisioning process. This phase connects your local <code>snc</code> and <code>now-sdk</code> tools to that instance.
+        The SDK has its own built-in authentication &mdash; no separate CLI tool required. Use <code>now-sdk auth</code> to connect to your PDI.
       </div>
 
-      <h3 class="sub">2.1 &mdash; Create an snc Profile</h3>
+      <h3 class="sub">2.1 &mdash; Add Your Instance as an Alias</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>snc configure profile set</pre>
+        <pre>now-sdk auth --add dev</pre>
       </div>
-      <p>You will be prompted for:</p>
+      <p>Replace <code>dev</code> with any short alias name you prefer. You will be prompted for:</p>
       <ul>
-        <li><strong>Host:</strong> <code>https://your-instance.service-now.com</code></li>
-        <li><strong>Login method:</strong> Basic (username/password) or OAuth</li>
+        <li><strong>Instance URL:</strong> <code>https://your-instance.service-now.com</code></li>
         <li><strong>Username:</strong> Your ServiceNow login</li>
         <li><strong>Password:</strong> Your ServiceNow password</li>
       </ul>
-      <p>To use a named profile (recommended if you have multiple instances):</p>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>snc configure profile set --profile dev</pre>
-      </div>
       <div class="callout warning">
         <strong>Security</strong>
-        snc stores credentials locally in <code>~/.snc/</code>. Never copy these files into your project repo or commit them. The <code>.gitignore</code> already excludes them.
+        Credentials are stored locally by the SDK. Never hardcode them in project files or commit them to git. The <code>.gitignore</code> in this project already excludes credential files.
       </div>
 
-      <h3 class="sub">2.2 &mdash; List Configured Profiles</h3>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>snc configure profile list</pre>
-      </div>
-      <p>Expected output shows your configured profiles and their instance URLs.</p>
-
-      <h3 class="sub">2.3 &mdash; Set the SDK Auth Alias</h3>
-      <p>Link the <code>now-sdk</code> to your snc profile:</p>
-      <div class="code-block">
-        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk auth --profile dev</pre>
-      </div>
-      <p>Or if using the default profile, <code>now-sdk</code> will pick it up automatically. Verify:</p>
+      <h3 class="sub">2.2 &mdash; Verify Authentication</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk auth --list</pre>
       </div>
-      <p>If you see an auth error: double-check the instance URL (no trailing slash), verify credentials in a browser, then re-run <code>snc configure profile set</code>.</p>
+      <p>Expected output shows your alias and instance URL with a connected status.</p>
+      <p>If you see an auth error: double-check the instance URL (no trailing slash), verify credentials in a browser, then re-run <code>now-sdk auth --add dev</code>.</p>
+
+      <h3 class="sub">2.3 &mdash; CI/CD Authentication (Optional)</h3>
+      <p>For non-interactive environments (pipelines, automation), use environment variables:</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="kw">export</span> SN_SDK_INSTANCE_URL=<span class="str">"https://your-instance.service-now.com"</span>
+<span class="kw">export</span> SN_SDK_USER=<span class="str">"your-username"</span>
+<span class="kw">export</span> SN_SDK_USER_PWD=<span class="str">"your-password"</span>
+<span class="kw">export</span> SN_SDK_NODE_ENV=<span class="str">"SN_SDK_CI_INSTALL"</span></pre>
+      </div>
     </section>
 
     <!-- Phase 3 -->
@@ -681,7 +612,7 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
       </div>
       <div class="callout">
         <strong>What is a Fluent scoped app?</strong>
-        In the modern SDK workflow, you write app metadata as <strong>Fluent DSL</strong> &mdash; a TypeScript-like language. The SDK compiles it to ServiceNow XML and installs it to your instance. All development is local-first. If you know this already, skip to 3.1.
+        In the modern SDK workflow, you write app metadata as <strong>Fluent DSL</strong> &mdash; a TypeScript-like language. The SDK compiles it to ServiceNow records and installs them to your instance. All development is local-first. If you know this already, skip to 3.1.
       </div>
 
       <h3 class="sub">3.1 &mdash; Initialize the App</h3>
@@ -689,13 +620,13 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk init</pre>
       </div>
-      <p>You will be prompted for:</p>
+      <p>You will be prompted to choose a template and provide:</p>
       <ul>
         <li><strong>App name:</strong> e.g., <code>My Training App</code></li>
         <li><strong>Scope:</strong> e.g., <code>x_snc_training</code></li>
         <li><strong>Version:</strong> <code>1.0.0</code></li>
+        <li><strong>Instance alias:</strong> the alias from Phase 2 (e.g., <code>dev</code>)</li>
       </ul>
-      <p>The SDK scaffolds a local Fluent project structure in a new directory.</p>
 
       <h3 class="sub">3.2 &mdash; Project Structure</h3>
       <div class="code-block">
@@ -717,12 +648,11 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
       </div>
       <div class="callout tip">
         <strong>Tip</strong>
-        Always run <code>now-sdk download</code> before starting work to make sure your local files are in sync with the instance.
+        Always run <code>now-sdk download</code> before starting work to ensure your local files are in sync with the instance.
       </div>
 
       <h3 class="sub">3.4 &mdash; Verify in the Instance</h3>
-      <p>Log into your PDI and navigate to:<br>
-      <strong>App Engine Studio &rarr; My Apps</strong> (or <strong>System Applications &rarr; Studio</strong>)<br>
+      <p>Log into your PDI: <strong>App Engine Studio &rarr; My Apps</strong> (or <strong>System Applications &rarr; Studio</strong>).<br>
       Your app will appear after you run <code>now-sdk install</code> in Phase 5.</p>
     </section>
 
@@ -745,7 +675,6 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
       <p>Claude Code will start and index your project files.</p>
 
       <h3 class="sub">4.2 &mdash; Create a CLAUDE.md</h3>
-      <p>A <code>CLAUDE.md</code> file gives Claude context about your project:</p>
       <div class="code-block">
         <div class="code-label">CLAUDE.md <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre><span class="cmt"># My Training App &mdash; ServiceNow Fluent Scoped App</span>
@@ -757,17 +686,18 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
 <span class="cmt">## Key Commands</span>
 - Download from instance: `now-sdk download`
 - Install to instance:    `now-sdk install`
+- Build (compile only):   `now-sdk build`
 - Initialize new app:     `now-sdk init`
 - App source: `src/`
 
 <span class="cmt">## Conventions</span>
 - All changes installed to instance AND committed to git
-- Never commit snc credentials or .snc/ directory
+- Never commit SDK credentials or instance auth files
 - Branch naming: feature/, fix/, chore/</pre>
       </div>
 
       <h3 class="sub">4.3 &mdash; MCP Settings Template</h3>
-      <p>Create <code>.claude/settings.json</code> at your project root:</p>
+      <p>Create <code>.claude/settings.json</code>:</p>
       <div class="code-block">
         <div class="code-label">json <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>{
@@ -787,7 +717,7 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
       </div>
       <div class="callout warning">
         <strong>Credentials</strong>
-        This template uses placeholder values and is safe to commit. When you fill in real credentials, save to <code>.claude/settings.local.json</code> (gitignored). Never commit real credentials.
+        This template uses placeholder values and is safe to commit. For real credentials, save to <code>.claude/settings.local.json</code> (gitignored). Never commit real credentials.
       </div>
     </section>
 
@@ -797,7 +727,7 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
         <div class="phase-number">5</div>
         <h2>Development Loop</h2>
       </div>
-      <p>The core Fluent workflow: download from instance &rarr; edit DSL locally &rarr; install back.</p>
+      <p>The core Fluent workflow: download from instance &rarr; edit DSL locally &rarr; build &rarr; install back.</p>
 
       <h3 class="sub">5.1 &mdash; Download Before You Start</h3>
       <div class="code-block">
@@ -822,14 +752,21 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
         Ask Claude Code to help &mdash; e.g., <em>"Add a utility function to IncidentUtils that formats an incident number as INC0001234."</em>
       </div>
 
-      <h3 class="sub">5.3 &mdash; Install to Instance</h3>
+      <h3 class="sub">5.3 &mdash; Build (Compile Only)</h3>
+      <p>Compile and check for errors without deploying to the instance:</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>now-sdk build</pre>
+      </div>
+
+      <h3 class="sub">5.4 &mdash; Install to Instance</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk install</pre>
       </div>
-      <p>This compiles your Fluent DSL and installs the resulting metadata to your PDI. Verify in the instance: open the record in Studio and confirm your edits are there.</p>
+      <p>This compiles your Fluent DSL and installs the metadata to your PDI. Verify in Studio that your changes are there.</p>
 
-      <h3 class="sub">5.4 &mdash; Handling Conflicts</h3>
+      <h3 class="sub">5.5 &mdash; Handling Conflicts</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>now-sdk download      <span class="cmt"># Get latest from instance first</span>
@@ -850,7 +787,6 @@ now-sdk install       <span class="cmt"># Then install your changes</span></pre>
       </div>
 
       <h3 class="sub">6.1 &mdash; Create a Feature Branch</h3>
-      <p>Never commit directly to main:</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>git checkout -b feature/my-first-change</pre>
@@ -866,7 +802,6 @@ now-sdk install       <span class="cmt"># Then install your changes</span></pre>
       </table>
 
       <h3 class="sub">6.2 &mdash; Stage and Commit</h3>
-      <p>After installing to your instance and verifying it works:</p>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>git add src/
@@ -900,7 +835,7 @@ git branch -d feature/my-first-change</pre>
       </div>
       <div class="callout">
         <strong>What is MCP?</strong>
-        Model Context Protocol (MCP) lets Claude Code talk directly to external systems &mdash; including your ServiceNow instance. With MCP configured, you can ask Claude to query tables, inspect app metadata, and interact with your instance without leaving your terminal.
+        Model Context Protocol (MCP) lets Claude Code talk directly to your ServiceNow instance. With MCP configured, you can ask Claude to query tables, inspect app metadata, and interact with your instance without leaving your terminal.
       </div>
       <div class="callout warning">
         <strong>Note</strong>
@@ -912,7 +847,6 @@ git branch -d feature/my-first-change</pre>
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>npx -y @modesty/fluent-mcp --help</pre>
       </div>
-      <p>This fetches and verifies the fluent-mcp package.</p>
 
       <h3 class="sub">7.2 &mdash; Configure Credentials (Local Only)</h3>
       <p>Edit <code>.claude/settings.json</code>, replacing placeholders with real values:</p>
@@ -941,7 +875,7 @@ git branch -d feature/my-first-change</pre>
       <h3 class="sub">7.3 &mdash; Restart Claude Code</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre><span class="cmt"># Exit Claude Code (Ctrl+C or /exit), then restart</span>
+        <pre><span class="cmt"># Exit (Ctrl+C or /exit), then restart</span>
 claude</pre>
       </div>
 
@@ -953,7 +887,6 @@ claude</pre>
       <p>You should see <code>fluent-mcp</code> listed as a connected server.</p>
 
       <h3 class="sub">7.5 &mdash; Try It</h3>
-      <p>Example prompts to try in Claude Code:</p>
       <ul>
         <li>"List the Script Includes in my ServiceNow scoped app"</li>
         <li>"Show me the tables defined in scope x_snc_training"</li>
@@ -983,22 +916,26 @@ claude</pre>
           </div>
           <div class="workflow-step">
             <div class="step-num">4</div>
-            <div class="step-text"><code>now-sdk install</code> &mdash; compile + install to PDI</div>
+            <div class="step-text"><code>now-sdk build</code> &mdash; compile and check for errors</div>
           </div>
           <div class="workflow-step">
             <div class="step-num">5</div>
-            <div class="step-text">Verify the change in your PDI browser</div>
+            <div class="step-text"><code>now-sdk install</code> &mdash; compile + install to PDI</div>
           </div>
           <div class="workflow-step">
             <div class="step-num">6</div>
-            <div class="step-text"><code>git add src/ &amp;&amp; git commit -m "feat: ..."</code></div>
+            <div class="step-text">Verify the change in your PDI browser</div>
           </div>
           <div class="workflow-step">
             <div class="step-num">7</div>
-            <div class="step-text"><code>git push &amp;&amp; gh pr create</code></div>
+            <div class="step-text"><code>git add src/ &amp;&amp; git commit -m "feat: ..."</code></div>
           </div>
           <div class="workflow-step">
             <div class="step-num">8</div>
+            <div class="step-text"><code>git push &amp;&amp; gh pr create</code></div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num">9</div>
             <div class="step-text">Merge PR after review</div>
           </div>
         </div>

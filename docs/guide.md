@@ -15,19 +15,7 @@ Before starting, ensure you have:
 - A ServiceNow PDI (Personal Developer Instance)
 - A GitHub account with SSH or HTTPS access configured
 - macOS or Linux (Windows WSL2 also works)
-
----
-
-## Toolchain Overview
-
-This guide uses **two complementary ServiceNow CLI tools**:
-
-| Tool | Purpose | Install method |
-|------|---------|----------------|
-| `snc` | Instance authentication / profile management | Binary installer |
-| `now-sdk` | Fluent pro-code app development (create, download, install) | npm |
-
-Both are required. `snc` manages your instance connection; `now-sdk` is the Fluent development engine.
+- Node.js **v20.18.0 or later** ([nodejs.org](https://nodejs.org) — choose LTS)
 
 ---
 
@@ -38,47 +26,39 @@ Both are required. `snc` manages your instance connection; `now-sdk` is the Flue
 Run each command to verify what's already installed:
 
 ```bash
-snc --version        # ServiceNow CLI (profile management)
 now-sdk --version    # ServiceNow SDK (Fluent dev engine)
 node --version       # Node.js — need v20.18.0+
+npm --version        # npm — need v8.19.3+
 git --version        # Git
 gh --version         # GitHub CLI
 ```
 
 If any command returns "command not found", follow the install steps below.
 
-### 1.2 Install / Upgrade ServiceNow CLI (snc)
+### 1.2 Install Node.js (if needed)
 
-> **What is snc?** The ServiceNow CLI handles instance authentication and
-> profile management. It is a binary installer — not available via npm or brew.
-
-**Download snc:**
-
-1. Go to: [developer.servicenow.com](https://developer.servicenow.com)
-2. Sign in with your ServiceNow credentials
-3. Navigate to: **Tools → ServiceNow CLI**
-4. Download the installer for your OS and run it
-
-**Alternative:** Download directly from [GitHub releases](https://github.com/ServiceNow/servicenow-cli/releases/latest) (no Store credentials required).
-
-**Verify installation:**
+The ServiceNow SDK requires **Node.js v20.18.0 or later**.
 
 ```bash
-snc --version
+node --version
 ```
 
-Expected output (version may differ):
-```
-snc/1.1.3 <os>-<arch> node-vxx.x.x
-```
+If below v20.18.0 or not installed:
+- **macOS (recommended):** `brew install node@20`
+- **All platforms:** Download **LTS** from [nodejs.org](https://nodejs.org)
 
-**If you have an old version**, re-run the installer — it upgrades in place.
+Verify after install:
+
+```bash
+node --version   # Should show v20.18.0 or higher
+npm --version    # Should show v8.19.3 or higher
+```
 
 ### 1.3 Install ServiceNow SDK (now-sdk)
 
 > **What is now-sdk?** The ServiceNow SDK is the Fluent pro-code development
-> engine. It compiles Fluent DSL to ServiceNow metadata, and manages
-> app creation, download from instance, and installation to instance.
+> engine. It compiles Fluent DSL (TypeScript-like metadata) to ServiceNow
+> records and manages the full app lifecycle: `init`, `download`, `install`.
 
 ```bash
 npm install -g @servicenow/sdk
@@ -92,22 +72,10 @@ now-sdk --version
 
 Expected output (version may differ):
 ```
-4.x.x
+4.4.x
 ```
 
-### 1.4 Install Node.js (if needed)
-
-The ServiceNow SDK requires **Node.js v20.18.0 or later**.
-
-```bash
-node --version
-```
-
-If below v20.18.0 or not installed:
-- **macOS (recommended):** `brew install node@20`
-- **All platforms:** Download from [nodejs.org](https://nodejs.org) — choose the **LTS** release
-
-### 1.5 Install GitHub CLI (if needed)
+### 1.4 Install GitHub CLI (if needed)
 
 ```bash
 # macOS
@@ -125,7 +93,7 @@ gh auth login
 
 Follow the prompts — choose GitHub.com → HTTPS → authenticate via browser.
 
-### 1.6 Configure Git Identity
+### 1.5 Configure Git Identity
 
 ```bash
 git config --global user.name "Your Name"
@@ -140,71 +108,64 @@ git config --global --list | grep user
 
 ---
 
-## Phase 2: PDI Authentication
+## Phase 2: Instance Authentication
 
-> You already have a PDI through the internal provisioning process.
-> This phase connects your local `snc` CLI to that instance.
+> This phase connects your local `now-sdk` to your PDI.
+> The SDK has its own built-in authentication — no separate CLI required.
 
-### 2.1 Create an snc Profile
+### 2.1 Add Your Instance as an Alias
 
 ```bash
-snc configure profile set
+now-sdk auth --add <your-alias>
+```
+
+Replace `<your-alias>` with a short name for your instance, e.g., `dev`:
+
+```bash
+now-sdk auth --add dev
 ```
 
 You will be prompted for:
-- **Host:** `https://your-instance.service-now.com`
-- **Login method:** Basic (username/password) or OAuth
+- **Instance URL:** `https://your-instance.service-now.com`
 - **Username:** Your ServiceNow login
 - **Password:** Your ServiceNow password
 
-> **Security note:** snc stores credentials locally in `~/.snc/`.
-> Never copy these files into your project repo or commit them.
-> The `.gitignore` in this project already excludes them.
+> **Security note:** Credentials are stored locally by the SDK.
+> Never hardcode them in project files or commit them to git.
+> The `.gitignore` in this project already excludes credential files.
 
-To use a named profile (recommended if you have multiple instances):
-
-```bash
-snc configure profile set --profile dev
-```
-
-### 2.2 List Configured Profiles
-
-```bash
-snc configure profile list
-```
-
-Expected output shows your configured profiles and their instance URLs.
-
-### 2.3 Set the SDK Auth Alias
-
-The `now-sdk` tool uses the snc profile you just created. Link them:
-
-```bash
-now-sdk auth --profile dev
-```
-
-Or if using the default profile, `now-sdk` will pick it up automatically.
-
-Verify the SDK can reach your instance:
+### 2.2 Verify Authentication
 
 ```bash
 now-sdk auth --list
 ```
 
+Expected output shows your alias and instance URL with a connected status.
+
 If you see an authentication error:
 - Double-check your instance URL (no trailing slash)
 - Verify your credentials work by logging into the instance in a browser
-- Re-run `snc configure profile set`
+- Re-run `now-sdk auth --add dev`
+
+### 2.3 CI/CD Authentication (Optional)
+
+For non-interactive environments (pipelines, automation), use environment variables instead of stored credentials:
+
+```bash
+export SN_SDK_INSTANCE_URL="https://your-instance.service-now.com"
+export SN_SDK_USER="your-username"
+export SN_SDK_USER_PWD="your-password"
+export SN_SDK_NODE_ENV="SN_SDK_CI_INSTALL"
+```
 
 ---
 
 ## Phase 3: Create a Fluent Scoped App
 
-> **What is a Fluent scoped app?** In the modern ServiceNow SDK workflow,
-> you write app metadata as Fluent DSL (a TypeScript-like DSL). The SDK
-> compiles it to ServiceNow XML and installs it to your instance.
-> All development is local-first — your instance is the target, not the editor.
-> If you already know this, skip ahead to 3.1.
+> **What is a Fluent scoped app?** In the modern SDK workflow, you write
+> app metadata as Fluent DSL — a TypeScript-like language. The SDK compiles
+> it to ServiceNow records and installs them to your instance.
+> All development is local-first. If you know this already, skip to 3.1.
 
 ### 3.1 Initialize the App
 
@@ -212,16 +173,15 @@ If you see an authentication error:
 now-sdk init
 ```
 
-You will be prompted for:
+You will be prompted to choose a template (e.g., `fullstack React` for UI, or a basic app template) and provide:
 - **App name:** e.g., `My Training App`
 - **Scope:** e.g., `x_snc_training` (auto-suggested, you can customize)
 - **Version:** `1.0.0`
+- **Instance alias:** the alias you set in Phase 2 (e.g., `dev`)
 
 The SDK scaffolds a local Fluent project structure in a new directory.
 
 ### 3.2 Explore the Project Structure
-
-The scaffolded structure will look like:
 
 ```
 my-training-app/
@@ -251,15 +211,15 @@ This pulls the existing app metadata from your PDI into the local `src/` directo
 Log into your PDI and navigate to:
 **App Engine Studio → My Apps** (or **System Applications → Studio**)
 
-Your new app should appear in the list after you install it in Phase 5.
+Your app will appear after you run `now-sdk install` in Phase 5.
 
 ---
 
 ## Phase 4: Connect to Claude Code
 
 > **What is Claude Code?** Claude Code (CC) is Anthropic's AI-powered CLI
-> development environment. It understands your codebase and can help you
-> write, review, and install ServiceNow Fluent app code — including talking
+> development environment. It understands your Fluent codebase and can help
+> you write, review, and install ServiceNow app code — including talking
 > directly to your instance via MCP (covered in Phase 7).
 
 ### 4.1 Open the Project in Claude Code
@@ -288,11 +248,12 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
 - Download from instance: `now-sdk download`
 - Install to instance:    `now-sdk install`
 - Initialize new app:     `now-sdk init`
+- Build (compile only):   `now-sdk build`
 - App source: `src/`
 
 ## Conventions
 - All changes installed to instance AND committed to git
-- Never commit snc credentials or .snc/ directory
+- Never commit SDK credentials or instance auth files
 - Branch naming: feature/, fix/, chore/
 ```
 
@@ -353,7 +314,15 @@ export const IncidentUtils = scriptInclude({
 > **Tip:** Ask Claude Code to help — e.g., "Add a utility function to
 > IncidentUtils that formats an incident number as INC0001234."
 
-### 5.3 Install to Instance
+### 5.3 Build (Optional — Compile Only)
+
+To compile and check for errors without deploying:
+
+```bash
+now-sdk build
+```
+
+### 5.4 Install to Instance
 
 ```bash
 now-sdk install
@@ -364,7 +333,7 @@ This compiles your Fluent DSL and installs the resulting metadata to your PDI.
 Verify in the instance: open the record you changed in Studio or the
 application navigator and confirm your edits are there.
 
-### 5.4 Handling Conflicts
+### 5.5 Handling Conflicts
 
 If your instance has changes that aren't in your local files:
 
@@ -508,10 +477,11 @@ Day-to-day Fluent development loop:
 │ 1. git checkout -b feature/my-change                │
 │ 2. now-sdk download      (sync from instance)       │
 │ 3. Edit Fluent DSL in Claude Code / VS Code         │
-│ 4. now-sdk install       (compile + push to PDI)    │
-│ 5. Verify change in PDI browser                     │
-│ 6. git add src/ && git commit -m "feat: ..."        │
-│ 7. git push && gh pr create                         │
-│ 8. Merge PR after review                            │
+│ 4. now-sdk build         (compile + check errors)   │
+│ 5. now-sdk install       (compile + push to PDI)    │
+│ 6. Verify change in PDI browser                     │
+│ 7. git add src/ && git commit -m "feat: ..."        │
+│ 8. git push && gh pr create                         │
+│ 9. Merge PR after review                            │
 └─────────────────────────────────────────────────────┘
 ```
