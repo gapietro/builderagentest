@@ -629,15 +629,22 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
       </ul>
 
       <h3 class="sub">3.2 &mdash; Project Structure</h3>
+      <p>After <code>now-sdk init</code> completes, your project will look like this:</p>
       <div class="code-block">
         <div class="code-label">tree</div>
         <pre>my-training-app/
-&#x251C;&#x2500;&#x2500; src/
-&#x2502;   &#x251C;&#x2500;&#x2500; index.ts         <span class="cmt"># App entry point (Fluent DSL)</span>
+&#x251C;&#x2500;&#x2500; src/                   <span class="cmt"># Your Fluent DSL source files</span>
 &#x2502;   &#x2514;&#x2500;&#x2500; ...
-&#x251C;&#x2500;&#x2500; now-sdk.json         <span class="cmt"># SDK project config</span>
-&#x251C;&#x2500;&#x2500; package.json
-&#x2514;&#x2500;&#x2500; tsconfig.json</pre>
+&#x251C;&#x2500;&#x2500; now.config.json        <span class="cmt"># SDK config (scope, instance alias, etc.)</span>
+&#x251C;&#x2500;&#x2500; now.dev.mjs            <span class="cmt"># Dev server entry point</span>
+&#x251C;&#x2500;&#x2500; now.prebuild.mjs       <span class="cmt"># Prebuild script</span>
+&#x251C;&#x2500;&#x2500; package.json           <span class="cmt"># npm config and dependencies</span>
+&#x251C;&#x2500;&#x2500; .eslintrc              <span class="cmt"># Linting rules</span>
+&#x2514;&#x2500;&#x2500; .vscode/               <span class="cmt"># VS Code workspace settings</span></pre>
+      </div>
+      <div class="callout tip">
+        <strong>Note</strong>
+        The config file is <code>now.config.json</code> &mdash; not <code>now-sdk.json</code> as shown in some older documentation.
       </div>
 
       <h3 class="sub">3.3 &mdash; Download Existing App Metadata (if applicable)</h3>

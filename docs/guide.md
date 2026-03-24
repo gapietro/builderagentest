@@ -183,15 +183,22 @@ The SDK scaffolds a local Fluent project structure in a new directory.
 
 ### 3.2 Explore the Project Structure
 
+After `now-sdk init` completes, your project will look like this:
+
 ```
 my-training-app/
-├── src/
-│   ├── index.ts         # App entry point (Fluent DSL)
+├── src/                   # Your Fluent DSL source files
 │   └── ...
-├── now-sdk.json         # SDK project config
-├── package.json
-└── tsconfig.json
+├── now.config.json        # SDK project config (scope, instance alias, etc.)
+├── now.dev.mjs            # Dev server entry point
+├── now.prebuild.mjs       # Prebuild script
+├── package.json           # npm config and dependencies
+├── .eslintrc              # Linting rules
+└── .vscode/               # VS Code workspace settings
 ```
+
+> **Note:** The config file is `now.config.json` — not `now-sdk.json` as shown
+> in some older documentation.
 
 ### 3.3 Download Existing App Metadata (if applicable)
 
