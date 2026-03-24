@@ -191,6 +191,10 @@ npm install
 
 This pulls in React, TypeScript, the ServiceNow SDK libraries, and all other packages defined in `package.json`. You only need to do this once after init (and again if `package.json` changes).
 
+> **Deprecation warnings are normal.** `npm install` will print warnings about
+> deprecated packages (inflight, glob, eslint, etc.). These come from the SDK's
+> own dependencies — ignore them and proceed.
+
 ### 3.3 Explore the Project Structure (for reference)
 
 After `now-sdk init` completes, your project will look like this:
@@ -318,7 +322,7 @@ Download is only used to sync changes made directly on the instance back to loca
 | Command | When to use |
 |---------|-------------|
 | `now-sdk build` | After editing — compiles Fluent DSL to `dist/`. **Required before install.** |
-| `now-sdk install` | After building — deploys `dist/` to your instance. |
+| `now-sdk install --alias <name>` | After building — deploys `dist/` to your instance. |
 | `now-sdk download src/` | Only when changes were made directly on the instance (e.g. in Studio). Syncs them back to local. |
 
 ---
@@ -356,11 +360,25 @@ Fix any errors reported before proceeding. The `dist/` directory is created
 ### 5.3 Install to Instance
 
 ```bash
-now-sdk install
+now-sdk install --alias <your-alias>
 ```
 
-Deploys the compiled `dist/` to your PDI. Verify in the instance: open the
-record you changed in Studio and confirm your edits are there.
+Replace `<your-alias>` with the alias you set in Phase 2 (e.g., `dev`):
+
+```bash
+now-sdk install --alias dev
+```
+
+Deploys the compiled `dist/` to your PDI. On success, the SDK prints a direct
+URL to your app on the instance:
+
+```
+App installed successfully.
+https://your-instance.service-now.com/sys_app.do?sys_id=...
+```
+
+Open that URL to verify the install — you can confirm your changes are live
+directly in the instance browser.
 
 ### 5.4 Download (Only When Needed)
 
@@ -512,7 +530,7 @@ Day-to-day Fluent development loop:
 │ 1. git checkout -b feature/my-change                │
 │ 2. Edit Fluent DSL in Claude Code / VS Code         │
 │ 3. now-sdk build         (compile DSL → dist/)      │
-│ 4. now-sdk install       (deploy dist/ to PDI)      │
+│ 4. now-sdk install --alias <alias>  (deploy to PDI) │
 │ 5. Verify change in PDI browser                     │
 │ 6. git add src/ && git commit -m "feat: ..."        │
 │ 7. git push && gh pr create                         │

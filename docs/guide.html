@@ -707,7 +707,7 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
 
 <span class="cmt">## Key Commands</span>
 - Download from instance: `now-sdk download`
-- Install to instance:    `now-sdk install`
+- Install to instance:    `now-sdk install --alias &lt;alias&gt;`
 - Build (compile only):   `now-sdk build`
 - Initialize new app:     `now-sdk init`
 - App source: `src/`
@@ -755,7 +755,7 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
         <thead><tr><th>Command</th><th>When to use</th></tr></thead>
         <tbody>
           <tr><td><code>now-sdk build</code></td><td>After editing — compiles Fluent DSL to <code>dist/</code>. <strong>Required before install.</strong></td></tr>
-          <tr><td><code>now-sdk install</code></td><td>After building — deploys <code>dist/</code> to your instance.</td></tr>
+          <tr><td><code>now-sdk install --alias &lt;name&gt;</code></td><td>After building — deploys <code>dist/</code> to your instance.</td></tr>
           <tr><td><code>now-sdk download src/</code></td><td>Only when changes were made directly on the instance (e.g. in Studio). Syncs them back to local.</td></tr>
         </tbody>
       </table>
@@ -791,9 +791,20 @@ Primary development via ServiceNow SDK (now-sdk) + Claude Code.
       <h3 class="sub">5.3 &mdash; Install to Instance</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
-        <pre>now-sdk install</pre>
+        <pre>now-sdk install --alias &lt;your-alias&gt;</pre>
       </div>
-      <p>Deploys the compiled <code>dist/</code> to your PDI. Verify in Studio that your changes are there.</p>
+      <p>Replace <code>&lt;your-alias&gt;</code> with the alias you set in Phase 2 (e.g., <code>dev</code>):</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>now-sdk install --alias dev</pre>
+      </div>
+      <p>Deploys the compiled <code>dist/</code> to your PDI. On success, the SDK prints a direct URL to your app:</p>
+      <div class="code-block">
+        <div class="code-label">output</div>
+        <pre><span class="cmt">App installed successfully.</span>
+https://your-instance.service-now.com/sys_app.do?sys_id=...</pre>
+      </div>
+      <p>Open that URL to verify the install — your changes are live.</p>
 
       <h3 class="sub">5.4 &mdash; Download (Only When Needed)</h3>
       <p>Use <strong>only</strong> if changes were made directly on the instance (e.g. in Studio) and you need to pull them back to local.</p>
@@ -948,7 +959,7 @@ claude</pre>
           </div>
           <div class="workflow-step">
             <div class="step-num">4</div>
-            <div class="step-text"><code>now-sdk install</code> &mdash; deploy <code>dist/</code> to PDI</div>
+            <div class="step-text"><code>now-sdk install --alias &lt;alias&gt;</code> &mdash; deploy <code>dist/</code> to PDI</div>
           </div>
           <div class="workflow-step">
             <div class="step-num">5</div>
