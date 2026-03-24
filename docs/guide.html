@@ -628,7 +628,18 @@ git config --global --list | grep user  <span class="cmt"># Verify</span></pre>
         <li><strong>Instance alias:</strong> the alias from Phase 2 (e.g., <code>dev</code>)</li>
       </ul>
 
-      <h3 class="sub">3.2 &mdash; Project Structure</h3>
+      <h3 class="sub">3.2 &mdash; Install Dependencies</h3>
+      <p>After <code>now-sdk init</code>, install npm dependencies <strong>before building or installing</strong>. This is a one-time step after init.</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>npm install</pre>
+      </div>
+      <div class="callout tip">
+        <strong>What this installs</strong>
+        React, TypeScript, the ServiceNow SDK libraries, and all other packages in <code>package.json</code>. The build will fail with "Cannot find module 'react'" if you skip this.
+      </div>
+
+      <h3 class="sub">3.3 &mdash; Project Structure</h3>
       <p>After <code>now-sdk init</code> completes, your project will look like this:</p>
       <div class="code-block">
         <div class="code-label">tree</div>

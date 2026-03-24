@@ -181,7 +181,17 @@ You will be prompted to choose a template (e.g., `fullstack React` for UI, or a 
 
 The SDK scaffolds a local Fluent project structure in a new directory.
 
-### 3.2 Explore the Project Structure
+### 3.2 Install Dependencies
+
+After `now-sdk init`, install the project's npm dependencies before doing anything else:
+
+```bash
+npm install
+```
+
+This pulls in React, TypeScript, the ServiceNow SDK libraries, and all other packages defined in `package.json`. You only need to do this once after init (and again if `package.json` changes).
+
+### 3.3 Explore the Project Structure (for reference)
 
 After `now-sdk init` completes, your project will look like this:
 
@@ -200,7 +210,7 @@ my-training-app/
 > **Note:** The config file is `now.config.json` — not `now-sdk.json` as shown
 > in some older documentation.
 
-### 3.3 Download Existing App Metadata (if applicable)
+### 3.4 Download Existing App Metadata (if applicable)
 
 > **Only applies if** the app already exists on your instance AND you have already
 > run `now-sdk init` locally. The `download` command requires a `now-sdk.json`
@@ -218,7 +228,7 @@ If you see `No valid scope found` — the app isn't on the instance yet. Run
 `now-sdk install` first (Phase 5.4) to push your local app up, then download
 will work for subsequent syncs.
 
-### 3.4 Verify in the Instance
+### 3.5 Verify in the Instance
 
 Log into your PDI and navigate to:
 **App Engine Studio → My Apps** (or **System Applications → Studio**)
