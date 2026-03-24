@@ -400,9 +400,109 @@ now-sdk download src/
 
 ---
 
+## Phase 5b: ServiceNow IDE Setup
+
+> **What is the ServiceNow IDE?** A standalone desktop IDE (VS Code-based)
+> built by ServiceNow. It includes the Build Agent (Now Assist), native
+> `now-sdk` integration via the **Build and Install** button, and a Source
+> Control panel for git workflows — all in one place.
+>
+> Do this after your app is successfully installed to the instance (Phase 5.3).
+
+### 5b.1 Open Your Project
+
+Launch the ServiceNow IDE, then open your project folder:
+
+**File → Open Folder** → navigate to your local `now-sdk` project directory
+(the folder containing `now.config.json`) → **Open**
+
+The IDE loads your project. The Source Control panel (branch icon in the left
+sidebar) will show **"No connected repositories"** if git hasn't been
+initialized yet in this folder.
+
+### 5b.2 Load Your App in Build Agent
+
+In the right-hand **Build Agent** panel:
+
+1. Click the **"Create or import application"** dropdown
+2. Select your app from the list (it will appear because you installed it in Phase 5.3)
+
+This connects the IDE to your app on the instance — enabling Build Agent to
+query your app, create files, and interact with your ServiceNow records
+directly from the IDE.
+
+### 5b.3 Initialize the Local Git Repository
+
+In the **Source Control** panel:
+
+1. Click **"Initialize Repository"**
+2. When prompted for the default branch name, type `main` and press **Enter**
+
+The IDE initializes a local git repo in your project folder with `main` as
+the default branch. You'll see your project files appear as untracked changes
+in the Source Control panel.
+
+> **Already have a repo?** If you initialized git outside the IDE (e.g. via
+> terminal), the Source Control panel will detect it automatically — skip
+> the Initialize step.
+
+---
+
 ## Phase 6: Git Workflow
 
-### 6.1 Create a Feature Branch
+### 6.1 Create a GitHub Remote Repository
+
+Before pushing, create a remote repo on GitHub and link it to your local project.
+
+**Option A — One command (create + link + push):**
+
+```bash
+gh repo create <repo-name> --private --source=. --remote=origin --push
+```
+
+Example:
+```bash
+gh repo create build-agent-troubleshooter --private --source=. --remote=origin --push
+```
+
+This creates the GitHub repo, sets `origin` as the remote, and pushes `main`
+in a single step. Use `--public` instead of `--private` if appropriate.
+
+**Option B — Create repo first, then link manually:**
+
+```bash
+# Create the repo on GitHub
+gh repo create <repo-name> --private
+
+# Add it as the remote
+git remote add origin https://github.com/<your-username>/<repo-name>.git
+
+# Push main and set tracking
+git push -u origin main
+```
+
+### 6.2 Link the ServiceNow IDE to the Remote
+
+After setting the remote (step 6.1), the ServiceNow IDE Source Control panel
+detects `origin` automatically. To verify and configure credentials:
+
+1. In the IDE, open Source Control (branch icon in sidebar)
+2. You should see your commits and the remote listed — if prompted, authenticate with GitHub
+3. Use the **"..."** menu → **"Push"** to push any pending commits to `origin/main`
+
+To confirm the remote is wired correctly from the terminal:
+
+```bash
+git remote -v
+```
+
+Expected output:
+```
+origin  https://github.com/<your-username>/<repo-name>.git (fetch)
+origin  https://github.com/<your-username>/<repo-name>.git (push)
+```
+
+### 6.3 Create a Feature Branch
 
 Never commit directly to main:
 
@@ -418,7 +518,7 @@ Branch naming:
 | `chore/` | Config, cleanup |
 | `docs/` | Documentation only |
 
-### 6.2 Stage and Commit
+### 6.4 Stage and Commit
 
 After installing to your instance and verifying it works:
 
@@ -429,14 +529,14 @@ git commit -m "feat: add incident utility functions"
 
 Keep commits small and focused. One logical change per commit.
 
-### 6.3 Push Branch and Open PR
+### 6.5 Push Branch and Open PR
 
 ```bash
 git push -u origin feature/my-first-change
 gh pr create --title "Add incident utility functions" --body "Adds formatIncidentNumber utility to IncidentUtils Script Include."
 ```
 
-### 6.4 Merge and Clean Up
+### 6.6 Merge and Clean Up
 
 After PR is approved:
 
@@ -525,6 +625,15 @@ Claude will use the MCP connection to query your instance in real time.
 ## Summary: Full Workflow Reference
 
 ```
+One-time setup (per app):
+┌─────────────────────────────────────────────────────┐
+│ 1. now-sdk init && npm install                      │
+│ 2. now-sdk build && now-sdk install --alias <name>  │
+│ 3. Open project in ServiceNow IDE                   │
+│ 4. Source Control → Initialize Repository → "main"  │
+│ 5. gh repo create --private --source=. --remote=origin --push │
+└─────────────────────────────────────────────────────┘
+
 Day-to-day Fluent development loop:
 ┌─────────────────────────────────────────────────────┐
 │ 1. git checkout -b feature/my-change                │

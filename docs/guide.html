@@ -429,6 +429,7 @@
     <div class="nav-section">
       <span class="nav-section-label">Workflow</span>
       <a href="#phase5" class="nav-link"><span class="nav-phase-badge">5</span> Dev Loop</a>
+      <a href="#phase5b" class="nav-link"><span class="nav-phase-badge">5b</span> SN IDE Setup</a>
       <a href="#phase6" class="nav-link"><span class="nav-phase-badge">6</span> Git Workflow</a>
       <a href="#phase7" class="nav-link"><span class="nav-phase-badge">7</span> MCP Setup</a>
     </div>
@@ -822,6 +823,43 @@ https://your-instance.service-now.com/sys_app.do?sys_id=...</pre>
       </div>
     </section>
 
+    <!-- Phase 5b -->
+    <section id="phase5b" class="phase-section">
+      <div class="phase-header">
+        <div class="phase-number">5b</div>
+        <h2>ServiceNow IDE Setup</h2>
+      </div>
+      <div class="callout">
+        <strong>What is the ServiceNow IDE?</strong>
+        A standalone desktop IDE (VS Code-based) built by ServiceNow. It includes the <strong>Build Agent</strong> (Now Assist), native <code>now-sdk</code> integration via the <strong>Build and Install</strong> button, and a Source Control panel for git workflows — all in one place. Do this after your app is installed (Phase 5.3).
+      </div>
+
+      <h3 class="sub">5b.1 &mdash; Open Your Project</h3>
+      <p>Launch the ServiceNow IDE, then:</p>
+      <p><strong>File &rarr; Open Folder</strong> &rarr; navigate to your local <code>now-sdk</code> project directory (the folder containing <code>now.config.json</code>) &rarr; <strong>Open</strong></p>
+      <p>The IDE loads your project. The Source Control panel (branch icon in the left sidebar) shows <strong>"No connected repositories"</strong> if git hasn't been initialized yet.</p>
+
+      <h3 class="sub">5b.2 &mdash; Load Your App in Build Agent</h3>
+      <p>In the right-hand <strong>Build Agent</strong> panel:</p>
+      <ol>
+        <li>Click the <strong>"Create or import application"</strong> dropdown</li>
+        <li>Select your app from the list — it appears because you installed it in Phase 5.3</li>
+      </ol>
+      <p>This connects the IDE to your app on the instance, enabling Build Agent to query your app, create files, and interact with your ServiceNow records directly from the IDE.</p>
+
+      <h3 class="sub">5b.3 &mdash; Initialize the Local Git Repository</h3>
+      <p>In the <strong>Source Control</strong> panel:</p>
+      <ol>
+        <li>Click <strong>"Initialize Repository"</strong></li>
+        <li>When prompted for the default branch name, type <code>main</code> and press <strong>Enter</strong></li>
+      </ol>
+      <p>The IDE initializes a local git repo in your project folder with <code>main</code> as the default branch. Your project files appear as untracked changes in the Source Control panel.</p>
+      <div class="callout tip">
+        <strong>Already initialized?</strong>
+        If you ran <code>git init</code> from the terminal before opening the IDE, the Source Control panel detects it automatically — skip the Initialize step.
+      </div>
+    </section>
+
     <!-- Phase 6 -->
     <section id="phase6" class="phase-section">
       <div class="phase-header">
@@ -829,7 +867,53 @@ https://your-instance.service-now.com/sys_app.do?sys_id=...</pre>
         <h2>Git Workflow</h2>
       </div>
 
-      <h3 class="sub">6.1 &mdash; Create a Feature Branch</h3>
+      <h3 class="sub">6.1 &mdash; Create a GitHub Remote Repository</h3>
+      <p>Before pushing, create a remote repo on GitHub and link it to your local project.</p>
+
+      <p><strong>Option A — One command (create + link + push):</strong></p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>gh repo create &lt;repo-name&gt; --private --source=. --remote=origin --push</pre>
+      </div>
+      <p>Example:</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>gh repo create build-agent-troubleshooter --private --source=. --remote=origin --push</pre>
+      </div>
+      <p>Creates the GitHub repo, sets <code>origin</code> as the remote, and pushes <code>main</code> in one step. Use <code>--public</code> instead of <code>--private</code> if appropriate.</p>
+
+      <p><strong>Option B — Create repo first, then link manually:</strong></p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre><span class="cmt"># Create the repo on GitHub</span>
+gh repo create &lt;repo-name&gt; --private
+
+<span class="cmt"># Add it as the remote</span>
+git remote add origin https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;.git
+
+<span class="cmt"># Push main and set tracking</span>
+git push -u origin main</pre>
+      </div>
+
+      <h3 class="sub">6.2 &mdash; Link the ServiceNow IDE to the Remote</h3>
+      <p>After setting the remote (step 6.1), the ServiceNow IDE Source Control panel detects <code>origin</code> automatically. To verify and push from the IDE:</p>
+      <ol>
+        <li>Open Source Control (branch icon in sidebar)</li>
+        <li>You should see your commits and the remote listed — authenticate with GitHub if prompted</li>
+        <li>Use the <strong>"..."</strong> menu &rarr; <strong>"Push"</strong> to push any pending commits to <code>origin/main</code></li>
+      </ol>
+      <p>Verify from the terminal:</p>
+      <div class="code-block">
+        <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
+        <pre>git remote -v</pre>
+      </div>
+      <div class="code-block">
+        <div class="code-label">output</div>
+        <pre>origin  https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;.git (fetch)
+origin  https://github.com/&lt;your-username&gt;/&lt;repo-name&gt;.git (push)</pre>
+      </div>
+
+      <h3 class="sub">6.3 &mdash; Create a Feature Branch</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>git checkout -b feature/my-first-change</pre>
@@ -844,14 +928,14 @@ https://your-instance.service-now.com/sys_app.do?sys_id=...</pre>
         </tbody>
       </table>
 
-      <h3 class="sub">6.2 &mdash; Stage and Commit</h3>
+      <h3 class="sub">6.4 &mdash; Stage and Commit</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>git add src/
 git commit -m <span class="str">"feat: add incident utility functions"</span></pre>
       </div>
 
-      <h3 class="sub">6.3 &mdash; Push Branch and Open PR</h3>
+      <h3 class="sub">6.5 &mdash; Push Branch and Open PR</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>git push -u origin feature/my-first-change
@@ -860,7 +944,7 @@ gh pr create \
   --body <span class="str">"Adds formatIncidentNumber to IncidentUtils."</span></pre>
       </div>
 
-      <h3 class="sub">6.4 &mdash; Merge and Clean Up</h3>
+      <h3 class="sub">6.6 &mdash; Merge and Clean Up</h3>
       <div class="code-block">
         <div class="code-label">bash <button class="copy-btn" onclick="copyCode(this)">copy</button></div>
         <pre>gh pr merge --squash
@@ -940,6 +1024,32 @@ claude</pre>
     <!-- Summary -->
     <section id="summary" class="phase-section">
       <div class="phase-header"><h2>Workflow Summary</h2></div>
+      <div class="workflow-box" style="margin-bottom:20px;">
+        <h3>One-Time Setup (per app)</h3>
+        <div class="workflow-steps">
+          <div class="workflow-step">
+            <div class="step-num">1</div>
+            <div class="step-text"><code>now-sdk init &amp;&amp; npm install</code> &mdash; scaffold the app and install dependencies</div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num">2</div>
+            <div class="step-text"><code>now-sdk build &amp;&amp; now-sdk install --alias &lt;name&gt;</code> &mdash; deploy to your PDI</div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num">3</div>
+            <div class="step-text">Open project in ServiceNow IDE &rarr; load app in Build Agent</div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num">4</div>
+            <div class="step-text">Source Control &rarr; <strong>Initialize Repository</strong> &rarr; type <code>main</code> &rarr; Enter</div>
+          </div>
+          <div class="workflow-step">
+            <div class="step-num">5</div>
+            <div class="step-text"><code>gh repo create &lt;name&gt; --private --source=. --remote=origin --push</code> &mdash; create GitHub remote and push</div>
+          </div>
+        </div>
+      </div>
+
       <p>Your day-to-day Fluent development loop once everything is set up:</p>
 
       <div class="workflow-box">
